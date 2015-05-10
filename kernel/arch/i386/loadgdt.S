@@ -1,14 +1,19 @@
 
 .intel_syntax noprefix
+/*
+ * 6 bytes gdt
 gdtr_limit:	.word	0
 gdtr_base:	.long	0
-.globl loadgdt
+ */
+
+.globl refreshGDT
 
 /*
-gdtr	dw 0
-	dd 0
-global loadgdt
-*/
+ * loadgdt(gd.base,gd.limit);
+   stack:
+	esp:		eip
+	esp + 4:	base
+	esp + 8:	limit
 loadgdt:
 	mov eax, [esp + 4]
 	mov [gdtr_base], eax
@@ -16,10 +21,11 @@ loadgdt:
 	mov [gdtr_limit], ax
 	
 	cli
-
 	lgdt [gdtr_limit]
 
-	ret
+ */
+refreshGDT:
+	cli
 	jmp 0x08:reload_cs
 reload_cs:
 	mov ax, 0x10
@@ -28,7 +34,6 @@ reload_cs:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-
 
 	sti
 

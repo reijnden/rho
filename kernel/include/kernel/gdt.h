@@ -22,6 +22,7 @@ void gdt_install();
 /*
  * Defined in loadgts.S
  */
-extern void loadgdt(uint16_t l, uint32_t b);
+//extern void loadgdt(uint16_t l, uint32_t b);
+extern void refreshGDT();
 
 #endif
