@@ -20,8 +20,14 @@ loadgdt:
 	lgdt [gdtr_limit]
 
 	ret
+/*
+ * 0x08 is the code segment in gdt
+ */
 	jmp 0x08:reload_cs
 reload_cs:
+/*
+ * 0x10 is the data segment in gdt
+ */
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax

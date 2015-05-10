@@ -3,6 +3,14 @@
 
 #include <stdint.h>
 
+struct idt_entry {
+	uint16_t offset_1;
+	uint16_t selector;
+	uint8_t zero;
+	uint8_t type_attr;
+	uint16_t offset_2;
+}__attribute__((packed));
+
 struct gdt_entry {
 	uint16_t limit_low;	// bits 0-15 limit
 	uint16_t base_low;	// bits 16-31 base
@@ -20,8 +28,12 @@ struct gdt_ptr {
 void gdt_install();
 
 /*
- * Defined in loadgts.S
+ * Defined in loadgdt.S
  */
 extern void loadgdt(uint16_t l, uint32_t b);
+/*
+ * Defined in loadidt.S
+ */
+extern void loadidt(uint16_t l, uint32_t b);
 
 #endif

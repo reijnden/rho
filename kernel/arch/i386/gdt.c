@@ -1,7 +1,11 @@
 #include <stdint.h>
 #include <kernel/gdt.h>
 
-struct gdt_entry gdt[3];
+#define GDT_ENTRIES	3
+#define IDT_ENTRIES	256
+
+struct gdt_entry gdt[GDT_ENTRIES];
+struct idt_entry idt[IDT_ENTRIES];
 
 static void gdt_set_gate(int num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran) {
 	gdt[num].base_low = (base & 0xFFFF);
@@ -17,7 +21,7 @@ static void gdt_set_gate(int num, uint32_t base, uint32_t limit, uint8_t access,
 
 void gdt_install() {
 	struct gdt_ptr gd;
-	gd.limit = (sizeof(struct gdt_entry) * 3) - 1;
+	gd.limit = (sizeof(struct gdt_entry) * GDT_ENTRIES) - 1;
 	gd.base =(uint32_t) &gdt;
 
 	/*
@@ -34,4 +38,11 @@ void gdt_install() {
 	gdt_set_gate(2, 0, 0xFFFF, 0x92, 0xCF);
 
 	loadgdt(gd.base,gd.limit);
+}
+
+void idt_install() {
+	struct gdt_ptr gd;
+	gd.limit = (sizeof(struct idt_entry) * IDT_ENTRIES) - 1;
+	gd.base =(uint32_t) &idt;
+	loadidt(gd.base,gd.limit);
 }
