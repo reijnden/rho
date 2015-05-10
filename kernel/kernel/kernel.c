@@ -6,6 +6,7 @@
 
 #include <kernel/tty.h>
 #include <kernel/multiboot.h>
+#include <kernel/gdt.h>
 
 void kernel_early(void)
 {
@@ -21,6 +22,9 @@ void kernel_main(int magic, multiboot_info *mbt)
 		abort();
 	}
 	boot_info(mbt);
+	printf ("Setting up Global Descriptor Table... ");
+	gdt_install();
+	printf ("OK\n");
 	/*
 	 * Testing printf
 	for ( unsigned int i = 0; i<16;i++) {
