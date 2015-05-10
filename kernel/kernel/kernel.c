@@ -25,6 +25,9 @@ void kernel_main(int magic, multiboot_info *mbt)
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	printf ("OK\n");
+	printf ("Setting up Interrupt Descriptor Table... ");
+	idt_install();
+	printf ("OK\n");
 	/*
 	 * Testing printf
 	for ( unsigned int i = 0; i<16;i++) {

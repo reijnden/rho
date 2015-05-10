@@ -8,6 +8,6 @@
 isr_wrapper:
 	pusha
 	cld	/* sysV ABI sais clear df */
-	call interrupt_handler
+	/*call interrupt_handler*/
 	popa
 	iret
