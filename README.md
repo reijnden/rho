@@ -1,6 +1,8 @@
-# bizim
+# rho
 
-Bizim is my attempt to learn more about OS development.
+https://en.wikipedia.org/wiki/Rho
+
+Rho is my attempt to learn more about OS development.
 
 I have started with a framework from OSDev.org.
 

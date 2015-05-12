@@ -13,9 +13,9 @@ INCLUDEDIR?=$(PREFIX)/include
 LIBDIR?=$(EXEC_PREFIX)/lib
 
 CFLAGS:=$(CFLAGS) -Wall -Wextra
-CPPFLAGS:=$(CPPFLAGS) -D__is_bizim_libc -Iinclude
+CPPFLAGS:=$(CPPFLAGS) -D__is_rho_libc -Iinclude
 LIBK_CFLAGS:=$(CFLAGS) -ffreestanding -fbuiltin
-LIBK_CPPFLAGS:=$(CPPFLAGS) -D__is_bizim_kernel
+LIBK_CPPFLAGS:=$(CPPFLAGS) -D__is_rho_kernel
 
 ARCHDIR:=arch/$(HOSTARCH)
 

@@ -8,4 +8,4 @@ done
 
 rm -rfv sysroot
 rm -rfv isodir
-rm -rfv bizim.iso
+rm -rfv rho.iso

@@ -5,7 +5,7 @@
 __attribute__((__noreturn__))
 void abort(void)
 {
-#if defined(__is_bizim_kernel)
+#if defined(__is_rho_kernel)
 	// TODO: Add proper kernel panic.
 	printf("Kernel Panic: abort()\n");
 #else

@@ -13,7 +13,7 @@ BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
 CFLAGS:=$(CFLAGS) -ffreestanding -fbuiltin -Wall -Wextra
-CPPFLAGS:=$(CPPFLAGS) -D__is_bizim_kernel -Iinclude
+CPPFLAGS:=$(CPPFLAGS) -D__is_rho_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
 LIBS:=$(LIBS) -nostdlib -lk -lgcc
 
@@ -48,11 +48,11 @@ $(OBJS) \
 $(CRTEND_OBJ) \
 $(CRTN_OBJ) \
 
-all: bizim.kernel
+all: rho.kernel
 
 .PHONY: all clean install install-headers install-kernel
 
-bizim.kernel: $(OBJ_LINK_LIST) $(ARCHDIR)/linker.ld
+rho.kernel: $(OBJ_LINK_LIST) $(ARCHDIR)/linker.ld
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(OBJ_LINK_LIST) $(LDFLAGS) $(LIBS)
 
 %.o: %.c
@@ -62,7 +62,7 @@ bizim.kernel: $(OBJ_LINK_LIST) $(ARCHDIR)/linker.ld
 	$(CC) -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 clean:
-	rm -f bizim.kernel $(OBJS) $(ALL_OUR_OBJS) *.o */*.o */*/*.o
+	rm -f rho.kernel $(OBJS) $(ALL_OUR_OBJS) *.o */*.o */*/*.o
 
 install: install-headers install-kernel
 
@@ -70,6 +70,6 @@ install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
 	cp -RTv include $(DESTDIR)$(INCLUDEDIR)
 
-install-kernel: bizim.kernel
+install-kernel: rho.kernel
 	mkdir -p $(DESTDIR)$(BOOTDIR)
-	cp bizim.kernel $(DESTDIR)$(BOOTDIR)
+	cp rho.kernel $(DESTDIR)$(BOOTDIR)
