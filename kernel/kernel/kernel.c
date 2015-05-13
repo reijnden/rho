@@ -9,6 +9,7 @@
 #include <kernel/gdt.h>
 #include <kernel/idt.h>
 #include <kernel/irq.h>
+#include <kernel/timer.h>
 
 void kernel_early(int magic)
 {
@@ -36,6 +37,13 @@ void kernel_main(int magic, multiboot_info *mbt)
 	printf ("OK\n");
 	printf ("Enabling interrupts... ");
 	irq_enable();
+	if (irq_on()) {
+		puts ("OK\n");
+	} else {
+		abort();
+	}
+	printf ("Configuring system clock... ");
+	timer_install(100);
 	printf ("OK\n");
 	/*
 	 * Testing printf

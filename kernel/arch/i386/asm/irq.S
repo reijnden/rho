@@ -129,5 +129,5 @@ irq_common:
 	pop ds
 	popa
 	add esp,8	/* errorcode and int_no */
-	cli
+	sti
 	iret

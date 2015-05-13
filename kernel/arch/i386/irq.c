@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <kernel/regs.h>
+#include <kernel/flags.h>
 #include <kernel/irq.h>
 #include <kernel/idt.h>
 #include <kernel/ioport.h>
@@ -13,11 +14,15 @@ static void *irq_h[16] = {
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
+unsigned int irq_on() {
+	return (eflags()>>9 & 0x1);
+}
+
 /*
  * Enable Interrupts
  */
 void irq_enable() {
-	__asm__ __volatile__ ( "cli" );
+	__asm__ __volatile__ ( "sti" );
 }
 
 /*
@@ -41,7 +46,7 @@ void irq_uninstall_handler(int irq) {
 }
 
 /*
- * Program the PIC to remap irq's 0 - 7 to channel 8 - 15
+ * Program the PIC to remap irq's 0 - 15 to channel 32 - 47
  */
 static void remap_irq() {
 	outportb(0x20,0x11);
@@ -58,7 +63,6 @@ static void remap_irq() {
 
 void irq_handler(struct regs *r) {
 	void (*handler)(struct regs *r);
-	printf ("IRQ_handler\n");
 
 	handler = irq_h[r->int_no-32];
 	if (handler) {
