@@ -1,17 +1,15 @@
 
 .intel_syntax noprefix
 
-.globl refreshGDT
+.globl refresh_gdt
 
-refreshGDT:
-	cli
-	jmp 0x08:reload_cs
-reload_cs:
+refresh_gdt:
 	mov ax, 0x10
 	mov ds, ax
 	mov es, ax
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	sti
+	jmp 0x08:reload_cs
+reload_cs:
 	ret
