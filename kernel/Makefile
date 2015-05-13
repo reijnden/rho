@@ -31,10 +31,10 @@ $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
 kernel/multiboot.o \
 
-CRTI_OBJ:=$(ARCHDIR)/crti.o
+CRTI_OBJ:=$(ARCHDIR)/asm/crti.o
 CRTBEGIN_OBJ:=$(shell $(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=crtbegin.o)
 CRTEND_OBJ:=$(shell $(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=crtend.o)
-CRTN_OBJ:=$(ARCHDIR)/crtn.o
+CRTN_OBJ:=$(ARCHDIR)/asm/crtn.o
 
 ALL_OUR_OBJS:=\
 $(CRTI_OBJ) \
