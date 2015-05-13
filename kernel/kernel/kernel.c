@@ -10,20 +10,20 @@
 #include <kernel/idt.h>
 #include <kernel/irq.h>
 
-void kernel_early(void)
+void kernel_early(int magic)
 {
-	__asm__ __volatile__ ( "cli" );
+	irq_disable();
 	terminal_initialize();
-}
-
-
-void kernel_main(int magic, multiboot_info *mbt)
-{
 	printf("Checking multiboot compliance [0x%x & 0x%x]...\n",magic,MULTIBOOT_MAGIC);
 	if (!(magic & MULTIBOOT_MAGIC)) {
 		printf ("Not multiboot compliant! %s\n","Aborting");
 		abort();
 	}
+}
+
+
+void kernel_main(int magic, multiboot_info *mbt)
+{
 	boot_info(mbt);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
@@ -35,7 +35,7 @@ void kernel_main(int magic, multiboot_info *mbt)
 	irq_install();
 	printf ("OK\n");
 	printf ("Enabling interrupts... ");
-	__asm__ __volatile__ ( "sti" );
+	irq_enable();
 	printf ("OK\n");
 	/*
 	 * Testing printf

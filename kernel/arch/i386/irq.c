@@ -14,6 +14,20 @@ static void *irq_h[16] = {
 };
 
 /*
+ * Enable Interrupts
+ */
+void irq_enable() {
+	__asm__ __volatile__ ( "cli" );
+}
+
+/*
+ * Disable Interrupts
+ */
+void irq_disable() {
+	__asm__ __volatile__ ( "cli" );
+}
+
+/*
  * Install a handler
  */
 void irq_install_handler (int irq, void (*handler)(struct regs *r)) {
