@@ -41,10 +41,11 @@ void kernel_main(int magic, multiboot_info *mbt)
 	}
 	 */
 	/*
-	 * Tesing asm
+	 * Testing cr0 register
+	 */
 	unsigned int cr0;
 	asm ("movl %%cr0,%%eax\n"
 	     "movl %%eax, %0" : "=rm" (cr0) );
 	printf("PE set by bootloader? cr0 register: 0x%x\n",cr0);
-	 */
+	/* */
 }

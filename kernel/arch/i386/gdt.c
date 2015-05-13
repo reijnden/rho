@@ -62,8 +62,9 @@ void gdt_install() {
 	gdt_set_gate(2, 0x0, 0x000FFFFF, 0x92, 0xC0);
 	//dumpgdt(2);
 
-	//loadgdt(gd.base,gd.limit);
+	asm ( "cli" );
 	asm ( "lgdtl %0" : : "m" (gd) );
-	refreshGDT();
+	refresh_gdt();
+	asm ( "sti" );
 }
 
