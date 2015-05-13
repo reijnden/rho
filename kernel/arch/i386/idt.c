@@ -1,5 +1,6 @@
 #include <stdint.h>
-#include <kernel/gdt.h>
+#include <kernel/idt.h>
+#include <kernel/regs.h>
 #include <stdio.h>
 
 #define IDT_ENTRIES	256
@@ -41,7 +42,7 @@ static unsigned char *int_msg[] = {
 	(unsigned char *)"0x2f reserved"
 };
 
-static void idt_set_gate(int num, uint32_t base, uint16_t selector, uint8_t type) {
+void idt_set_gate(int num, uint32_t base, uint16_t selector, uint8_t type) {
 	idt[num].base_low = (base & 0xFFFF);		// copy lower 2 bytes 
 	idt[num].base_high = (base >> 16 ) & 0xFFFF;	// shift 2 bytes , copy lower 2 byte
 
@@ -92,26 +93,7 @@ void idt_install() {
 	asm ( "lidtl %0" : : "m" (id) );
 }
 
-static void coredump(struct regs *r) {
-	printf ("EIP:0x%x",r->eip);
-	printf (",EAX:0x%x",r->eax);
-	printf (",EBX:0x%x",r->ebx);
-	printf (",ECX:0x%x",r->ecx);
-	printf (",EDX:0x%x",r->edx);
-	printf (",ESP:0x%x",r->esp);
-	printf (",EBP:0x%x",r->ebp);
-	printf (",ESI:0x%x",r->esi);
-	printf (",EDI:0x%x",r->edi);
-	printf ("\nCS:0x%x",r->cs);
-	printf (",DS:0x%x",r->ds);
-	printf (",ES:0x%x",r->es);
-	printf (",FS:0x%x",r->fs);
-	printf (",GS:0x%x",r->gs);
-	printf (",SS:0x%x",r->ss);
-	printf ("\nEFLAGS:0x%x\n",r->eflags);
-}
-
-void interrupt_handler(struct regs *r){
+void fault_handler(struct regs *r){
 	switch (r->int_no) {
 		case 0:
 			printf ("Interrupt [%i:%i][%s]!\n",r->int_no,r->err_code,int_msg[r->int_no]);

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/gdt.h>
+#include <kernel/regs.h>
 #include <stdio.h>
 
 #define GDT_ENTRIES	3
@@ -62,9 +63,7 @@ void gdt_install() {
 	gdt_set_gate(2, 0x0, 0x000FFFFF, 0x92, 0xC0);
 	//dumpgdt(2);
 
-	asm ( "cli" );
 	asm ( "lgdtl %0" : : "m" (gd) );
 	refresh_gdt();
-	asm ( "sti" );
 }
 

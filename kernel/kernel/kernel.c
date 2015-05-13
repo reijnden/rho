@@ -7,9 +7,12 @@
 #include <kernel/tty.h>
 #include <kernel/multiboot.h>
 #include <kernel/gdt.h>
+#include <kernel/idt.h>
+#include <kernel/irq.h>
 
 void kernel_early(void)
 {
+	__asm__ __volatile__ ( "cli" );
 	terminal_initialize();
 }
 
@@ -27,6 +30,12 @@ void kernel_main(int magic, multiboot_info *mbt)
 	printf ("OK\n");
 	printf ("Setting up Interrupt Descriptor Table... ");
 	idt_install();
+	printf ("OK\n");
+	printf ("Setting up IRQ... ");
+	irq_install();
+	printf ("OK\n");
+	printf ("Enabling interrupts... ");
+	__asm__ __volatile__ ( "sti" );
 	printf ("OK\n");
 	/*
 	 * Testing printf

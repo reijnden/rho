@@ -3,7 +3,7 @@
  */
 .intel_syntax noprefix
 
-.extern interrupt_handler
+.extern fault_handler
 
 .globl	isr0
 .globl	isr1
@@ -210,11 +210,11 @@ isr_common:
 	mov es,ax
 	mov fs,ax
 	mov gs,ax
-	mov eax,esp	/* push the stack pointer, it contains cpu state for interrupt_handler*/
+	mov eax,esp	/* push the stack pointer, it contains cpu state for fault_handler*/
 	push eax
-	/*mov eax,interrupt_handler
+	/*mov eax,fault_handler
 	call eax*/
-	call interrupt_handler
+	call fault_handler
 	pop eax
 	pop gs
 	pop fs
@@ -222,4 +222,5 @@ isr_common:
 	pop ds
 	popa
 	add esp,8	/* errorcode and int_no */
+	sti
 	iret
