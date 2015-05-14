@@ -4,25 +4,55 @@
 #include <kernel/regs.h>
 #include <stdio.h>
 
-#define CLOCKRATE	1193180		/* Don't change this value. It is the internal clockrate of the PIT */
-static int _clockrate = CLOCKRATE;	/* Default value, 1 tick per second ;-)	*/
-static int timer_ticks;			/* Our uptime counter			*/
+#define PIT_CH0_REG	0x40		/* Channel 0 bound to IRQ0	*/
+#define PIT_CH1_REG	0x41		/* Channel 1 system specific	*/
+#define PIT_CH2_REG	0x42		/* Channel 2 system speaker	*/
+#define PIT_CMD_REG	0x43
+#define PIT_CMD		0x36		/* 00 11 011 0
+					 * bit 0 	BCD		0 16 bit value
+					 * bit 1-3 	Mode		3 Square Wave Mode
+					 * bit 4 5 	RW mode		3 Low byte high byte
+					 * bit 6 7 	Cntr		0 Channel select
+					 */
 
+#define HW_HERTZ	1193182		/* Don't change! Internal clockrate of the PIT */
+static int _clockrate = 18;		/* If no hz is given we keep the default*/
+static unsigned long timer_ticks;			/* Our uptime counter			*/
+
+/*
+ * The PIT is counting down from divisor to zero.
+ * When it hist zero it sends IRQ0 and resets.
+ * Counting speed is HW_HERTZ. 
+ * Example:
+ * hz = HW_HERTZ: divisor = 1: 1193182 IRQs/second
+ * hz = 100: divisor = 11931: 100 IRQs/second
+ * divisor = 
+ */
 static void timer_phase(int hz) {
-	int divisor = CLOCKRATE / hz;	/* result is hz ticks/second		*/
-	outportb(0x43, 0x36);		/* 0x43 is the PIT command channel	*/
-	outportb(0x40, divisor & 0xFF);	/* low and high byte of divisor */
-	outportb(0x40, divisor >> 8);
+	int divisor = HW_HERTZ / hz;	/* result is hz ticks/second		*/
+	outportb(PIT_CMD_REG, PIT_CMD);		
+	outportb(PIT_CH0_REG, divisor & 0xFF);	/* low and high byte of divisor */
+	outportb(PIT_CH0_REG, divisor >> 8);
 }
 
 /*
  * Our IRQ handler
  */
 void timer_handler (struct regs *r) {
-	putchar ('.');
 	timer_ticks++;
 	if (timer_ticks % _clockrate == 0) {
-		puts ("A second has passed\n");
+		printf (".");	/* second */
+	}
+}
+
+/*
+ * Our IRQ handler
+ * Print uptime
+ */
+void irq33_handler (struct regs *r) {
+	unsigned char key = inportb(0x60);
+	if (!(key & 0x80)) { /* skip key release */
+		printf ("uptime %lu seconds\n",timer_ticks/_clockrate);	/* second */
 	}
 }
 
@@ -30,7 +60,10 @@ void timer_handler (struct regs *r) {
  * Set up clock rate and install irq_handler for timer
  */
 void timer_install(int clockrate) {
-	_clockrate = clockrate;
+	if (clockrate>0) {
+		_clockrate = clockrate;
+	}
 	timer_phase(_clockrate);
 	irq_install_handler(0,timer_handler);
+	irq_install_handler(1,irq33_handler);
 }

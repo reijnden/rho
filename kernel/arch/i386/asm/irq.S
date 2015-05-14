@@ -27,7 +27,6 @@ irq0:
 	push 0 /* dummy errorcode */
 	push 32 /* int_no */
 	jmp irq_common
-
 irq1:
 	cli
 	push 0 /* dummy errorcode */
@@ -80,7 +79,6 @@ irq10:
 	jmp irq_common
 irq11:
 	cli
-
 	push 0 /* dummy errorcode */
 	push 43 /* int_no */
 	jmp irq_common
@@ -91,7 +89,6 @@ irq12:
 	jmp irq_common
 irq13:
 	cli
-
 	push 0 /* dummy errorcode */
 	push 45 /* int_no */
 	jmp irq_common
@@ -129,5 +126,4 @@ irq_common:
 	pop ds
 	popa
 	add esp,8	/* errorcode and int_no */
-	sti
 	iret

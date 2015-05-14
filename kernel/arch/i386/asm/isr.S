@@ -222,5 +222,4 @@ isr_common:
 	pop ds
 	popa
 	add esp,8	/* errorcode and int_no */
-	sti
 	iret

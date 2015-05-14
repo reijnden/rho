@@ -96,9 +96,6 @@ void idt_install() {
 void fault_handler(struct regs *r){
 	switch (r->int_no) {
 		case 0:
-			printf ("Interrupt [%i:%i][%s]!\n",r->int_no,r->err_code,int_msg[r->int_no]);
-			coredump(r);
-			break;
 		case 1:
 		case 2:
 		case 3:
@@ -130,7 +127,8 @@ void fault_handler(struct regs *r){
 		case 29:
 		case 30:
 		case 31:
-			printf ("Interrupt [%i:%i][%s]! Halting system\n",r->int_no,r->err_code,int_msg[r->int_no]);
+			printf ("Interrupt [%li:%li][%s]! Halting system\n",r->int_no,r->err_code,int_msg[r->int_no]);
+			coredump(r);
 			while ( 1 ) { }
 			__builtin_unreachable();
 			break;

@@ -6,6 +6,10 @@
 #include <kernel/idt.h>
 #include <kernel/ioport.h>
 
+#define PIC_MASTER		0x20
+#define PIC_SLAVE		0xA0
+#define END_OF_INTERRUPT	0x20
+
 /*
  * An array of IRQ Handler functions
  */
@@ -49,16 +53,22 @@ void irq_uninstall_handler(int irq) {
  * Program the PIC to remap irq's 0 - 15 to channel 32 - 47
  */
 static void remap_irq() {
-	outportb(0x20,0x11);
-	outportb(0xa0,0x11);
-	outportb(0x21,0x20);
-	outportb(0xa1,0x28);
-	outportb(0x21,0x04);
-	outportb(0xa1,0x02);
-	outportb(0x21,0x01);
-	outportb(0xa1,0x01);
-	outportb(0x21,0x0);
-	outportb(0xa1,0x0);
+	/* outportb(port,data) */
+	outportb(PIC_MASTER,0x11);
+	outportb(PIC_SLAVE,0x11);
+	/* remap to 0x20 (32) */
+	outportb(PIC_MASTER+1,0x20);
+	/* remap to 0x28 (40) */
+	outportb(PIC_SLAVE+1,0x28);
+
+	outportb(PIC_MASTER+1,0x04);
+	outportb(PIC_SLAVE+1,0x02);
+
+	outportb(PIC_MASTER+1,0x01);
+	outportb(PIC_SLAVE+1,0x01);
+	/* enable irqs */
+	outportb(PIC_MASTER+1,0x0);
+	outportb(PIC_SLAVE+1,0x0);
 }
 
 void irq_handler(struct regs *r) {
@@ -72,12 +82,12 @@ void irq_handler(struct regs *r) {
 	 * Send EOI to slave PIC
 	 */
 	if (r->int_no >= 40) {
-		outportb(0xa0,0x20);
+		outportb(PIC_SLAVE,END_OF_INTERRUPT);
 	}
 	/*
 	 * Send EOI to master PIC
 	 */
-	outportb(0x20,0x20);
+	outportb(PIC_MASTER,END_OF_INTERRUPT);
 }
 
 void irq_install() {

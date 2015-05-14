@@ -38,7 +38,7 @@ void kernel_main(int magic, multiboot_info *mbt)
 	printf ("Enabling interrupts... ");
 	irq_enable();
 	if (irq_on()) {
-		puts ("OK\n");
+		printf ("OK\n");
 	} else {
 		abort();
 	}
@@ -64,5 +64,12 @@ void kernel_main(int magic, multiboot_info *mbt)
 	asm ("movl %%cr0,%%eax\n"
 	     "movl %%eax, %0" : "=rm" (cr0) );
 	printf("PE set by bootloader? cr0 register: 0x%x\n",cr0);
+
+	/*
+	 * Wait until interrupted
+	 */
+	while ( 1 ) {
+		__asm__ __volatile__ ( "hlt" );
+	}
 	/* */
 }
