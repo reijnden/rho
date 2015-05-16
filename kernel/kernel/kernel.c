@@ -10,6 +10,7 @@
 #include <kernel/idt.h>
 #include <kernel/irq.h>
 #include <kernel/timer.h>
+#include <kernel/keyboard.h>
 
 void kernel_early(int magic)
 {
@@ -35,6 +36,12 @@ void kernel_main(int magic, multiboot_info *mbt)
 	printf ("Setting up IRQ... ");
 	irq_install();
 	printf ("OK\n");
+	printf ("Configuring system clock... ");
+	timer_install(100);
+	printf ("OK\n");
+	printf ("Enabling keyboard... ");
+	keyboard_install();
+	printf ("OK\n");
 	printf ("Enabling interrupts... ");
 	irq_enable();
 	if (irq_on()) {
@@ -42,9 +49,6 @@ void kernel_main(int magic, multiboot_info *mbt)
 	} else {
 		abort();
 	}
-	printf ("Configuring system clock... ");
-	timer_install(100);
-	printf ("OK\n");
 	/*
 	 * Testing printf
 	for ( unsigned int i = 0; i<16;i++) {

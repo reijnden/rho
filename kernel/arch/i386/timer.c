@@ -41,18 +41,7 @@ static void timer_phase(int hz) {
 void timer_handler (struct regs *r) {
 	timer_ticks++;
 	if (timer_ticks % _clockrate == 0) {
-		printf (".");	/* second */
-	}
-}
-
-/*
- * Our IRQ handler
- * Print uptime
- */
-void irq33_handler (struct regs *r) {
-	unsigned char key = inportb(0x60);
-	if (!(key & 0x80)) { /* skip key release */
-		printf ("uptime %lu seconds\n",timer_ticks/_clockrate);	/* second */
+//		printf (".");	/* second */
 	}
 }
 
@@ -65,5 +54,4 @@ void timer_install(int clockrate) {
 	}
 	timer_phase(_clockrate);
 	irq_install_handler(0,timer_handler);
-	irq_install_handler(1,irq33_handler);
 }
