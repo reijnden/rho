@@ -31,39 +31,19 @@ static void gdt_set_gate(int num, uint32_t base, uint32_t limit, uint8_t access,
 	gdt[num].access = access;			// copy all
 }
 
-static void dumpgdt(int i) {
-	printf("\nDumping GDT entry [%d]:\n",i);
-	struct gdt_entry *e = &gdt[i];
-	void *p = e;
-	for (int j = 0; j < 8; j++) {
-		printf("0x%x ",*(uint8_t *)p);
-		p++;
-	}
-	printf("\n");
-}
-
 void gdt_install() {
 	static struct gdt_ptr gd;
 	gd.limit = (sizeof(struct gdt_entry) * GDT_ENTRIES) - 1;
 	gd.base =(uint32_t) &gdt;
-
-	/*
-	 * NULL descriptor
-	 */
+	/* NULL descriptor */
 	gdt_set_gate(0, 0, 0, 0, 0);
-	//dumpgdt(0);
-	/*
-	 * Code Segment
-	 */
+	/* Code Segment */
 	gdt_set_gate(1, 0x0, 0x000FFFFF, 0x9A, 0xC0);
-	//dumpgdt(1);
-	/*
-	 * Data Segment
-	 */
+	/* Data Segment */
 	gdt_set_gate(2, 0x0, 0x000FFFFF, 0x92, 0xC0);
-	//dumpgdt(2);
-
+	/* Load table into register */
 	asm ( "lgdtl %0" : : "m" (gd) );
+	/* Do the magic */
 	refresh_gdt();
 }
 

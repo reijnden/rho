@@ -34,6 +34,7 @@ _start:
 	call _init
 
 	# Transfer control to the main kernel.
+	pop %eax
 	call kernel_main
 
 	# Hang if kernel_main unexpectedly returns.

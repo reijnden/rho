@@ -12,19 +12,18 @@
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
 
-void kernel_early(int magic)
+void kernel_early(uint32_t magic)
 {
 	irq_disable();
 	terminal_initialize();
-	printf("Checking multiboot compliance [0x%x & 0x%x]...\n",magic,MULTIBOOT_MAGIC);
+	printf("Checking multiboot compliance [0x%lx & 0x%x]...\n",magic,MULTIBOOT_MAGIC);
 	if (!(magic & MULTIBOOT_MAGIC)) {
 		printf ("Not multiboot compliant! %s\n","Aborting");
 		abort();
 	}
 }
 
-
-void kernel_main(int magic, multiboot_info *mbt)
+void kernel_main(multiboot_info *mbt)
 {
 	boot_info(mbt);
 	printf ("Setting up Global Descriptor Table... ");

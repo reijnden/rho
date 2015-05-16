@@ -8,7 +8,11 @@
 #define LSHFT	0x2a
 #define RSHFT	0x2a
 #define FLAG_UPPER 0x80
+#define KEY_RELEASE 0x80
 
+/*
+ * A very simple keyboard layout
+ */
 unsigned char kb[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8',		/* 10 */
        	'9', '0', '-', '=', 0,'\t','q','w','e',	'r',		/* 20 */
@@ -23,7 +27,7 @@ unsigned char kb[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,				/* 110 */
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,				/* 120 */
 	0, 0, 0, 0, 0, 0, 0, 0,					/* 128 */
-	/* uppercase table starts here ( just add 128 )*/
+	/* uppercase table starts here ( |=FLAG_UPPER )*/
 	0, 0, '!', '@', '#', '$', '%', '^', '&', '*',		/* 10 */
        	'(', ')', '_', '+', 0, '\t', 'Q', 'W', 'E', 'R',	/* 20 */
        	'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 0,	/* 30 */
@@ -47,12 +51,13 @@ unsigned char kb[] = {
 unsigned char keyflags = 0x0;
 void keyboard_handler (struct regs *r) {
 	unsigned char key = inportb(0x60);
-	if (key & 0x80)  /* release */
+	if (key & KEY_RELEASE)  /* release */
 		return;
 	if ((key == RSHFT) || (key == LSHFT)) {
 		keyflags |= FLAG_UPPER;
 	} else if (kb[key]) {
 		putchar (kb[key + keyflags]);
+		/* Printing a character uses up the flags */
 		keyflags = 0x0;
 	}
 }

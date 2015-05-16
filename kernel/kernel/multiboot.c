@@ -33,7 +33,7 @@ void boot_info(multiboot_info *mbt)
 		multiboot_mmap *mmap = (multiboot_mmap *)(mbt->mmap_addr);
 		uint64_t mema = 0;
 		uint64_t memr = 0;
-		while (mmap < mbt->mmap_addr + mbt->mmap_length) {
+		while (mmap < (multiboot_mmap *)(mbt->mmap_addr + mbt->mmap_length)) {
 			if (mmap->type & MULTIBOOT_MEMORY_AVAILABLE)
 				mema+=mmap->len;
 			if (mmap->type & MULTIBOOT_MEMORY_RESERVED)
@@ -44,7 +44,7 @@ void boot_info(multiboot_info *mbt)
 					mmap->len,
 					mmap->len,
 					mmap->type);
-			mmap = (unsigned int)mmap + (unsigned int)(mmap->size) + sizeof(unsigned int);
+			mmap = (multiboot_mmap *)((unsigned int)mmap + (unsigned int)(mmap->size) + sizeof(unsigned int));
 		}
 		printf("Total memory : %lluKb, Reserved: %lluKb, Available: %lluKb\n",
 				(mema+memr)/1024, memr/1024, mema/1024);

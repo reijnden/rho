@@ -41,7 +41,6 @@ static void timer_phase(int hz) {
 void timer_handler (struct regs *r) {
 	timer_ticks++;
 	if (timer_ticks % _clockrate == 0) {
-//		printf (".");	/* second */
 	}
 }
 
