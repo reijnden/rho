@@ -5,15 +5,19 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define LSHFT	0x2a
-#define RSHFT	0x2a
-#define FLAG_UPPER 0x80
-#define KEY_RELEASE 0x80
+#define LSHFT		0x2a
+#define RSHFT		0x2a
+#define UC		0x80
+#define KEY_UP		0x80
 
+/*
+ * space for storing control keys
+ */
+unsigned char kbflags = 0x0;
 /*
  * A very simple keyboard layout
  */
-unsigned char kb[] = {
+unsigned char kbmap[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8',		/* 10 */
        	'9', '0', '-', '=', 0,'\t','q','w','e',	'r',		/* 20 */
 	't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,	/* 30 */
@@ -27,7 +31,7 @@ unsigned char kb[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,				/* 110 */
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,				/* 120 */
 	0, 0, 0, 0, 0, 0, 0, 0,					/* 128 */
-	/* uppercase table starts here ( |=FLAG_UPPER )*/
+	/* uppercase table starts here ( |=UC )*/
 	0, 0, '!', '@', '#', '$', '%', '^', '&', '*',		/* 10 */
        	'(', ')', '_', '+', 0, '\t', 'Q', 'W', 'E', 'R',	/* 20 */
        	'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 0,	/* 30 */
@@ -43,23 +47,22 @@ unsigned char kb[] = {
 	0, 0, 0, 0, 0, 0, 0, 0					/* 128 */
 };
 
-
 /*
  * Our IRQ handler for the keyboard
  * This function presumes that there can be only one keyboard.
  */
-unsigned char keyflags = 0x0;
 void keyboard_handler (struct regs *r) {
-	unsigned char key = inportb(0x60);
-	if (key & KEY_RELEASE)  /* release */
+	unsigned char scancode = inportb(KB_DATAPORT);
+	if (scancode & KEY_UP) {				/* release */
+		scancode &= ~KEY_UP;				/* switch off bit 7 to get the original key */
+		if ((scancode == RSHFT) || (scancode == LSHFT))
+			kbflags &= ~UC;				/* upper off */
 		return;
-	if ((key == RSHFT) || (key == LSHFT)) {
-		keyflags |= FLAG_UPPER;
-	} else if (kb[key]) {
-		putchar (kb[key + keyflags]);
-		/* Printing a character uses up the flags */
-		keyflags = 0x0;
 	}
+	if ((scancode == RSHFT) || (scancode == LSHFT))
+		kbflags |= UC;					/* upper on */
+	else if (kbmap[scancode])
+		putchar (kbmap[scancode + kbflags]);
 }
 
 /*

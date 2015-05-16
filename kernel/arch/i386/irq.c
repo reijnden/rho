@@ -6,8 +6,6 @@
 #include <kernel/idt.h>
 #include <kernel/iobus.h>
 
-#define PIC_MASTER		0x20
-#define PIC_SLAVE		0xA0
 #define END_OF_INTERRUPT	0x20
 
 /*
