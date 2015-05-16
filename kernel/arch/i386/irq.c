@@ -4,7 +4,7 @@
 #include <kernel/flags.h>
 #include <kernel/irq.h>
 #include <kernel/idt.h>
-#include <kernel/ioport.h>
+#include <kernel/iobus.h>
 
 #define PIC_MASTER		0x20
 #define PIC_SLAVE		0xA0

@@ -1,5 +1,5 @@
 
-#include <kernel/ioport.h>
+#include <kernel/iobus.h>
 #include <kernel/irq.h>
 #include <kernel/regs.h>
 #include <stdio.h>
