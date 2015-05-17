@@ -9,14 +9,18 @@
 #define END_OF_INTERRUPT	0x20
 
 /*
- * An array of IRQ Handler functions
+ * An array of IRQ_SZ IRQ Handler functions
  */
 static void *irq_h[16] = { 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
-unsigned int irq_on() {
+/*
+ * Check if IRQs are enabled
+ * bit 9 is the if flag
+ */
+bool irq_on() {
 	return (eflags()>>9 & 0x1);
 }
 
@@ -24,14 +28,14 @@ unsigned int irq_on() {
  * Enable Interrupts
  */
 void irq_enable() {
-	__asm__ __volatile__ ( "sti" );
+	asm ( "sti" );
 }
 
 /*
  * Disable Interrupts
  */
 void irq_disable() {
-	__asm__ __volatile__ ( "cli" );
+	asm ( "cli" );
 }
 
 /*
@@ -71,17 +75,14 @@ static void remap_irq() {
 
 void irq_handler(struct regs *r) {
 	void (*handler)(struct regs *r);
-
 	handler = irq_h[r->int_no-32];
-	if (handler) {
+	if (handler)
 		handler(r);
-	}
 	/*
 	 * Send EOI to slave PIC
 	 */
-	if (r->int_no >= 40) {
+	if (r->int_no >= 40) 
 		outportb(PIC_SLAVE,END_OF_INTERRUPT);
-	}
 	/*
 	 * Send EOI to master PIC
 	 */

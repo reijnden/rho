@@ -10,6 +10,6 @@ struct regs {
 	uint32_t eip,cs,eflags,useresp,ss;
 };
 
-void coredump(struct regs *r);
+void kdebug();
 
 #endif

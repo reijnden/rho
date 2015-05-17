@@ -2,13 +2,14 @@
 #define _KERNEL_IRH_H
 
 #include <kernel/regs.h>
+#include <stdbool.h>
 
 void irq_install();
 void irq_install_handler (int irq, void (*handler)(struct regs *r));
 void irq_uninstall_handler(int irq);
 void irq_enable();
 void irq_disable();
-unsigned int irq_on();
+bool irq_on();
 
 /*
  * Defined in irq.S

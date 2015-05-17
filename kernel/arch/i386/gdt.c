@@ -43,12 +43,10 @@ static void gdt_set_gate(int num, uint32_t base, uint32_t limit, uint8_t access,
 	gdt[num].base_low = (base & 0xFFFF);		/* copy lower 2 bytes */
 	gdt[num].base_middle = (base >> 16 ) & 0xFF;	/* shift 2 bytes, copy low byte */
 	gdt[num].base_high = (base >> 24 ) & 0xFF;	/* shift 3 bytes , copy low byte */
-
 	gdt[num].limit_low = (limit & 0xFFFF );		/* copy lower 2 bytes */
 	gdt[num].granularity = ((limit >> 16) & 0x0F);	/* shift 2 bytes, copy low nibble */
 							/* high nibble is disregarded */
 							/* high byte disregarded */
-
 	gdt[num].granularity |= (gran & 0xF0);		/* copy high nibble, disregard low nibble */
 	gdt[num].access = access;			/* copy all */
 }
