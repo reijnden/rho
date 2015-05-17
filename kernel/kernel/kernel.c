@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <kernel/core.h>
 #include <kernel/tty.h>
 #include <kernel/multiboot.h>
 #include <kernel/gdt.h>
@@ -68,6 +69,7 @@ void kernel_main(multiboot_info *mbt)
 	     "movl %%eax, %0" : "=rm" (cr0) );
 	printf("PE set by bootloader? cr0 register: 0x%x\n",cr0);
 
+	printf("Rho version %d.%d.%d booted\n",RHO_MAJOR,RHO_MINOR,RHO_PATCH);
 	/*
 	 * Wait until interrupted
 	 */
