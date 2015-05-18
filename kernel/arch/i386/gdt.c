@@ -48,6 +48,10 @@ static struct gdt_entry gdt[GDT_ENTRIES];
  * access:	8 bit
  *
  *	Layout GDT Entry:
+ *	bs = base
+ *	lim = limit
+ *	flg = flags
+ *
  *	|---- ---- ---- ----|---- ---- ---- ----|
  *	|	bs 0:15     |	lim 0:15	|
  *	|---- ----|----|----|---- ----|---- ----|
@@ -56,7 +60,7 @@ static struct gdt_entry gdt[GDT_ENTRIES];
  *	Flags:	Gr,Sz,'0','0'
  *		Gr: granularity 0=byte, 1=4Kb blocks
  *		Sz: 0=16bit protected mode,1=32bit pm
- *	Access:	See defines above
+ *	Access:	See definition above
  *
  *		Let's try this:
  *		0x100000 (1M) Kernel code (0x100 in 4K-blocks (0x1000))
