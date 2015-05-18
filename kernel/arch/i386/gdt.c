@@ -3,7 +3,7 @@
 #include <kernel/regs.h>
 #include <stdio.h>
 
-#define GDT_ENTRIES	3
+#define GDT_ENTRIES	5
 /*
  * Bitmask for access bits in GDT entry
  * access is 8 bits
@@ -32,6 +32,8 @@
 #define GDT_FLGS	((F_GR | F_SZ) << 20)
 #define KERNEL_CODE	AC | AC_DPL0 | AC_EX | AC_RW
 #define KERNEL_DATA	AC | AC_DPL0 | AC_RW
+#define USER_CODE	AC | AC_DPL3 | AC_EX | AC_RW
+#define USER_DATA	AC | AC_DPL3 | AC_RW
 
 static struct gdt_entry gdt[GDT_ENTRIES];
 
@@ -83,6 +85,12 @@ void gdt_install() {
 	gdt_set_gate(2, 0x0,				/* Kernel data */
 		0x000FFFFF | GDT_FLGS,
 		KERNEL_DATA);
+	gdt_set_gate(3, 0x0,				/* User code */
+		0x000FFFFF | GDT_FLGS,
+		USER_CODE);
+	gdt_set_gate(4, 0x0,				/* User data */
+		0x000FFFFF | GDT_FLGS,
+		USER_DATA);
 	asm ( "lgdtl %0" : : "m" (gd) );		/* Load table into register */
 	refresh_gdt();					/* Do the magic */
 }
