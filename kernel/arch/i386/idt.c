@@ -127,7 +127,7 @@ static void coredump(struct regs *r) {
 	printf (", FS:0x%lx",r->fs);
 	printf (", GS:0x%lx",r->gs);
 	printf (", SS:0x%lx",r->ss);
-	printf (", useresp:0x%lx",r->useresp);
+	printf (", UserESP:0x%lx",r->useresp);
 	printf ("\nEFLAGS:0x%lx\n",r->eflags);
 	printf ("=============================================\n");
 }
