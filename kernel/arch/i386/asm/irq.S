@@ -104,9 +104,9 @@ irq15:
 	jmp irq_common
 
 irq_common:
-	pusha
-	push ds
-	push es
+	pusha			/* we are building a struct regs on the stack */
+	push ds			/* the cpu has pushed eip,cd,eflags,esp and ss for us */
+	push es			/* in the isr# we have pushed erro and int no */
 	push fs
 	push gs
 	mov ax,0x10	/* kernel data segment */
@@ -115,12 +115,15 @@ irq_common:
 	mov fs,ax
 	mov gs,ax
 
-	call irq_handler
+	mov eax,esp		/* Finally: the function wants a pointer to struct */
+	push eax		/* So we push the address of the stack! */
+	call irq_handler	/* kernel code segment selector is set in idt table entry */
+	pop eax			/* stack cleanup below */
 
 	pop gs
 	pop fs
 	pop es
 	pop ds
 	popa
-	add esp,8	/* errorcode and int_no */
-	iret
+	add esp,8		/* errorcode and int_no */
+	iret			/* finally: iret pops eip,cs,eflags,esp and ss */
