@@ -7,6 +7,12 @@
 #include <kernel/tty.h>
 #include <kernel/multiboot.h>
 
+/*
+ * Inspect the info provided by the bootloader.
+ * Currently it is printed to screen.
+ * TODO: store the info for later usage.
+ * For example the memory map and commandline can be usefull ;-)
+ */
 void boot_info(multiboot_info *mbt)
 {
 	printf ("Flags [%x]\n",(unsigned int)mbt->flags);

@@ -13,6 +13,9 @@
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
 
+/*
+ * Called from boot.S, prior to global constructor
+ */
 void kernel_early(uint32_t magic)
 {
 	irq_disable();
@@ -24,6 +27,9 @@ void kernel_early(uint32_t magic)
 	}
 }
 
+/*
+ * Called from boot.S, after global constructor
+ */
 void kernel_main(multiboot_info *mbt)
 {
 	boot_info(mbt);

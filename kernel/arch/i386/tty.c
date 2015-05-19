@@ -5,6 +5,10 @@
 
 #include <kernel/vga.h>
 
+/*
+ * Macro for scrolling
+ * If the number of rows reaches a certain maximum the scroll function is called
+ */
 #define __SCROLL(H) if( ++terminal_row == H ) \
 				 terminal_scroll()
 
@@ -13,11 +17,17 @@ size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
 
+/*
+ * Dubious function, I think we should remove this one, or rewrite this file.
+ */
 static uint8_t terminal_setcolor(uint8_t color) {
 	terminal_color = color;
 	return terminal_color;
 }
 
+/*
+ * Prepare the terminal for output.
+ */
 void terminal_initialize(void) {
 	terminal_row = 0;
 	terminal_column = 0;
@@ -31,6 +41,9 @@ void terminal_initialize(void) {
 	}
 }
 
+/*
+ * Place a character at given position in the buffer.
+ */
 static void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = make_vgaentry(c, color);
@@ -49,6 +62,9 @@ static void terminal_scroll() {
 	terminal_row--;
 }
 
+/*
+ * Write one character to the buffer
+ */
 void terminal_putchar(char c) {
 	if (c == '\n') {
 		terminal_column = 0;
@@ -62,11 +78,17 @@ void terminal_putchar(char c) {
 	}
 }
 
+/*
+ * Write a string with given size to the buffer
+ */
 void terminal_write(const char* data, size_t size) {
 	for ( size_t i = 0; i < size; i++ )
 		terminal_putchar(data[i]);
 }
 
+/*
+ * Write a null-terminated string to the buffer
+ */
 void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
 }
