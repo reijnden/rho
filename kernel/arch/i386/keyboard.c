@@ -5,9 +5,14 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+/* Scancodes for control characters */
 #define LSHFT		0x2a
 #define RSHFT		0x2a
+#define BCKSPC		0x1d
+/* flags */
 #define UC		0x80
+#define BS		0x40
+/* Release bit */
 #define KEY_UP		0x80
 
 /*
@@ -20,7 +25,7 @@ unsigned char kbflags = 0x0;
 unsigned char kbmap[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8',		/* 10 */
        	'9', '0', '-', '=', 0,'\t','q','w','e',	'r',		/* 20 */
-	't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,	/* 30 */
+	't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', '\b',	/* 30 */
 	'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',	/* 40 */
 	'\'', '`', 0, '\\', 'z', 'x', 'c', 'v', 'b', 'n',	/* 50 */
 	'm', ',', '.', '/', 0, 0, 0, ' ', 0, 0,			/* 60 */
@@ -34,7 +39,7 @@ unsigned char kbmap[] = {
 	/* uppercase table starts here ( |=UC )*/
 	0, 0, '!', '@', '#', '$', '%', '^', '&', '*',		/* 10 */
        	'(', ')', '_', '+', 0, '\t', 'Q', 'W', 'E', 'R',	/* 20 */
-       	'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 0,	/* 30 */
+       	'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', '\b',	/* 30 */
        	'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',	/* 40 */
        	'"', '~', 0, '|', 'U', 'X', 'C', 'V', 'B', 'N',		/* 50 */
        	'M', '<', '>', '?', 0, 0, 0, ' ', 0, 0,			/* 60 */
@@ -56,11 +61,19 @@ void keyboard_handler (struct regs *r) {
 	if (scancode & KEY_UP) {				/* release */
 		scancode &= ~KEY_UP;				/* switch off bit 7 to get the original key */
 		if ((scancode == RSHFT) || (scancode == LSHFT))
-			kbflags &= ~UC;				/* upper off */
+			kbflags &= ~UC;				/* uppercase flag off */
+		if (scancode == BCKSPC) {
+			kbflags &= ~BS;				/* backspace flag off */
+			putchar (kbmap[scancode + kbflags]);	/* process backspace on release */
+		}
 		return;
 	}
+	if (kbflags & BS)					/* we process nothing until backspace release */
+		return;
 	if ((scancode == RSHFT) || (scancode == LSHFT))
-		kbflags |= UC;					/* upper on */
+		kbflags |= UC;					/* uppercase flag on */
+	else if (scancode == BCKSPC)
+		kbflags |= BS;					/* backspace flag on */
 	else if (kbmap[scancode])
 		putchar (kbmap[scancode + kbflags]);
 }

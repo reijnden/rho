@@ -9,8 +9,9 @@
  * Macro for scrolling
  * If the number of rows reaches a certain maximum the scroll function is called
  */
-#define __SCROLL(H) if( ++terminal_row == H ) \
-				 terminal_scroll()
+#define __NEWLINE(H) terminal_column = 0; \
+		     if( ++terminal_row == H ) \
+		             terminal_scroll()
 
 size_t terminal_row;
 size_t terminal_column;
@@ -67,14 +68,26 @@ static void terminal_scroll() {
  */
 void terminal_putchar(char c) {
 	if (c == '\n') {
-		terminal_column = 0;
-		__SCROLL(VGA_HEIGHT);
+		__NEWLINE(VGA_HEIGHT);
 		return;
 	}
-	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	if ( ++terminal_column == VGA_WIDTH ) {
-		terminal_column = 0;
-		__SCROLL(VGA_HEIGHT);
+	/*
+	 * Backspace means put a space on the previous position
+	 * Unless that is a newline
+	 */
+	if (c == '\b') {
+		if (terminal_column == 0) { /* beginning of line */
+			terminal_column = VGA_WIDTH;
+			terminal_row--;
+		}
+		terminal_column--;
+		c = ' ';
+		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+	} else {
+		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+		if ( ++terminal_column == VGA_WIDTH ){
+			__NEWLINE(VGA_HEIGHT);
+		}
 	}
 }
 
