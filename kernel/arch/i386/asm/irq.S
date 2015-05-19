@@ -114,12 +114,9 @@ irq_common:
 	mov es,ax
 	mov fs,ax
 	mov gs,ax
-	mov eax,esp	/* push the stack pointer, it contains cpu state for irq_handler*/
-	push eax
-	/*mov eax,irq_handler
-	call eax*/
+
 	call irq_handler
-	pop eax
+
 	pop gs
 	pop fs
 	pop es
