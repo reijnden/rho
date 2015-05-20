@@ -4,42 +4,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <kernel/core.h>
 #include <kernel/tty.h>
-#include <kernel/multiboot.h>
 
 /*
  * Inspect the info provided by the bootloader.
- * Currently it is printed to screen.
- * TODO: store the info for later usage.
- * For example the memory map and commandline can be usefull ;-)
+ * Currently it is printed to screen and attached to the system struct
  */
-void boot_info(multiboot_info *mbt)
+void bootstrap(multiboot_info *mbt, system *sys_handle)
 {
-	printf ("Flags [%x]\n",(unsigned int)mbt->flags);
-	if (mbt->flags & MULTIBOOT_INFO_MEMORY) {
-		printf ("Lower memory at 0x0: %u Kb\n",(unsigned int)mbt->mem_lower);
-		printf ("Upper memory at 0x100000: %u Kb\n",(unsigned int)mbt->mem_upper);
+	sys_handle->mbi = mbt;
+	printf ("Flags [%x]\n",(unsigned int)BOOTINFO->flags);
+	if (BOOTINFO->flags & MULTIBOOT_INFO_MEMORY) {
+		printf ("Lower memory at 0x0: %u Kb,",(unsigned int)BOOTINFO->mem_lower);
+		printf ("Upper memory at 0x100000: %u Kb\n",(unsigned int)BOOTINFO->mem_upper);
 	}
-	if (mbt->flags & MULTIBOOT_INFO_BOOTDEV) {
-		
-		printf ("Boot device: [0x%x]\n", (unsigned int)(mbt->boot_device));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_CMDLINE) {
-		
-		printf ("Command line: [%s]\n", (char *)(mbt->cmdline));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_MODS) {
-		
-		printf ("Modules count: [0x%x]\n", (unsigned int)(mbt->mods_count));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_MEM_MAP) {
+	if (BOOTINFO->flags & MULTIBOOT_INFO_BOOTDEV)
+		printf ("Boot device: [0x%x]\n", (unsigned int)(BOOTINFO->boot_device));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_CMDLINE)
+		printf ("Command line: [%s]\n", (char *)(BOOTINFO->cmdline));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_MODS)
+		printf ("Modules count: [0x%x]\n", (unsigned int)(BOOTINFO->mods_count));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_MEM_MAP) {
 		printf ("Memory map address: 0x%lx, length: %lu bytes\n", 
-				(unsigned long)(mbt->mmap_addr),
-				(unsigned long)(mbt->mmap_length));
-		multiboot_mmap *mmap = (multiboot_mmap *)(mbt->mmap_addr);
+				(unsigned long)(BOOTINFO->mmap_addr),
+				(unsigned long)(BOOTINFO->mmap_length));
+		multiboot_mmap *mmap = (multiboot_mmap *)(BOOTINFO->mmap_addr);
 		uint64_t mema = 0;
 		uint64_t memr = 0;
-		while (mmap < (multiboot_mmap *)(mbt->mmap_addr + mbt->mmap_length)) {
+		while (mmap < (multiboot_mmap *)(BOOTINFO->mmap_addr + BOOTINFO->mmap_length)) {
 			if (mmap->type & MULTIBOOT_MEMORY_AVAILABLE)
 				mema+=mmap->len;
 			if (mmap->type & MULTIBOOT_MEMORY_RESERVED)
@@ -55,24 +48,15 @@ void boot_info(multiboot_info *mbt)
 		printf("Total memory : %lluKb, Reserved: %lluKb, Available: %lluKb\n",
 				(mema+memr)/1024, memr/1024, mema/1024);
 	}
-	if (mbt->flags & MULTIBOOT_INFO_DRIVE_INFO) {
-		
-		printf ("Drive info: [0x%x]\n", (unsigned int)(mbt->drives_length));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_CONFIG_TABLE) {
-		
-		printf ("Config table: [0x%x]\n", (unsigned int)(mbt->config_table));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME) {
-		printf ("Bootloader: [%s]\n", (const char *)(mbt->boot_loader_name));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_APM_TABLE) {
-		
-		printf ("APM table: [0x%x]\n", (unsigned int)(mbt->apm_table));
-	}
-	if (mbt->flags & MULTIBOOT_INFO_VBE_INFO) {
-		
+	if (BOOTINFO->flags & MULTIBOOT_INFO_DRIVE_INFO)
+		printf ("Drive info: [0x%x]\n", (unsigned int)(BOOTINFO->drives_length));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_CONFIG_TABLE)
+		printf ("Config table: [0x%x]\n", (unsigned int)(BOOTINFO->config_table));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME)
+		printf ("Bootloader: [%s]\n", (const char *)(BOOTINFO->boot_loader_name));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_APM_TABLE)
+		printf ("APM table: [0x%x]\n", (unsigned int)(BOOTINFO->apm_table));
+	if (BOOTINFO->flags & MULTIBOOT_INFO_VBE_INFO)
 		printf ("Graphics table %s\n","available");
-	}
 }
 

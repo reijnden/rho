@@ -31,13 +31,13 @@ _start:
 	# The stack contains magic number, multiboot_header
 	# So the function can use these, in this order
 	call kernel_early
+	pop %eax	# clean the stack
+	pop %ebx	# clean the stack
 
 	# Call the global constructors.
 	call _init
 
 	# Transfer control to the main kernel.
-	pop %eax	# pop the magic number
-	# The stack now contains the multiboot_header only
 	call kernel_main
 
 	# Hang if kernel_main unexpectedly returns.

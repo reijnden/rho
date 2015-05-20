@@ -6,33 +6,30 @@
 
 #include <kernel/core.h>
 #include <kernel/tty.h>
-#include <kernel/multiboot.h>
 #include <kernel/gdt.h>
 #include <kernel/idt.h>
 #include <kernel/irq.h>
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
 
+
 /*
  * Called from boot.S, prior to global constructor
  */
-void kernel_early(uint32_t magic)
+void kernel_early(uint32_t magic, multiboot_info *mbt)
 {
 	irq_disable();
 	terminal_initialize();
+	printf("%s version %d.%d.%d booting\n",RHO_NAME,RHO_MAJOR,RHO_MINOR,RHO_PATCH);
 	printf("Checking multiboot compliance [0x%lx & 0x%x]...\n",magic,MULTIBOOT_MAGIC);
 	if (!(magic & MULTIBOOT_MAGIC)) {
 		printf ("Not multiboot compliant! %s\n","Aborting");
 		abort();
 	}
-}
-
-/*
- * Called from boot.S, after global constructor
- */
-void kernel_main(multiboot_info *mbt)
-{
-	boot_info(mbt);
+	/*
+	 * All important stuff is saved in the sys struct here.
+	 */
+       	bootstrap(mbt,SYS_HANDLE);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	printf ("OK\n");
@@ -75,7 +72,14 @@ void kernel_main(multiboot_info *mbt)
 	     "movl %%eax, %0" : "=rm" (cr0) );
 	printf("PE set by bootloader? cr0 register: 0x%x\n",cr0);
 
-	printf("Rho version %d.%d.%d booted\n",RHO_MAJOR,RHO_MINOR,RHO_PATCH);
+}
+
+/*
+ * Called from boot.S, after global constructor
+ */
+void kernel_main()
+{
+	printf("%s version %d.%d.%d booted successfully!\n",RHO_NAME,RHO_MAJOR,RHO_MINOR,RHO_PATCH);
 	/*
 	 * Wait until interrupted
 	 */
