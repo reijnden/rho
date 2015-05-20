@@ -8,12 +8,17 @@
 #include <kernel/tty.h>
 
 /*
+ * Parse the command line parameters
+ */
+void parse_cmdline() {
+}
+
+/*
  * Inspect the info provided by the bootloader.
  * Currently it is printed to screen and attached to the system struct
  */
-void bootstrap(multiboot_info *mbt, system *sys_handle)
-{
-	sys_handle->mbi = mbt;
+void bootstrap(multiboot_info *mbt, system *h_sys) {
+	h_sys->mbi = mbt;
 	printf ("Flags [%x]\n",(unsigned int)BOOTINFO->flags);
 	if (BOOTINFO->flags & MULTIBOOT_INFO_MEMORY) {
 		printf ("Lower memory at 0x0: %u Kb,",(unsigned int)BOOTINFO->mem_lower);

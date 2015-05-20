@@ -13,6 +13,7 @@
 #include <kernel/keyboard.h>
 
 
+system sys;
 /*
  * Called from boot.S, prior to global constructor
  */
@@ -29,7 +30,7 @@ void kernel_early(uint32_t magic, multiboot_info *mbt)
 	/*
 	 * All important stuff is saved in the sys struct here.
 	 */
-       	bootstrap(mbt,SYS_HANDLE);
+       	bootstrap(mbt,&sys);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	printf ("OK\n");

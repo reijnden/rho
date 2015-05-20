@@ -94,9 +94,7 @@ typedef struct {
 
 void bootstrap(multiboot_info *mbt, system *sys);
 
-system sys;
-#define SYS_HANDLE &sys
 
-#define BOOTINFO	((multiboot_info *)(sys_handle->mbi))
+#define BOOTINFO	((multiboot_info *)(h_sys->mbi))
 
 #endif
