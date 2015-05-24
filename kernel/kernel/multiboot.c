@@ -7,11 +7,7 @@
 #include <kernel/core.h>
 #include <kernel/tty.h>
 
-/*
- * Parse the command line parameters
- */
-void parse_cmdline() {
-}
+#define BOOTINFO	((multiboot_info *)(h_sys->mbi))
 
 /*
  * Inspect the info provided by the bootloader.
