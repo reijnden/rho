@@ -80,6 +80,7 @@ void kernel_main(multiboot_info *mbt)
 	 * Wait until interrupted
 	 */
 	while ( 1 ) {
+		upd_c();
 		__asm__ __volatile__ ( "hlt" );
 	}
 	/* */

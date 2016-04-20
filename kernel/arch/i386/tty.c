@@ -27,6 +27,18 @@ static uint8_t terminal_setcolor(uint8_t color) {
 }
 
 /*
+ * See http://wiki.osdev.org/Text_Mode_Cursor
+ */
+void upd_c() {
+	unsigned short p = (terminal_row*VGA_WIDTH)+terminal_column;
+
+	outportb(0x3D4,0x0F);
+	outportb(0x3D5,(unsigned char)(p&0xFF));
+	outportb(0x3D4,0x0E);
+	outportb(0x3D5,(unsigned char)((p>>8)&0xFF));
+}
+
+/*
  * Prepare the terminal for output.
  */
 void terminal_initialize(void) {
