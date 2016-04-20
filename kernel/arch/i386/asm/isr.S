@@ -1,5 +1,5 @@
 /*
- * Interrup Service Requests
+ * Interrupt Service Requests
  */
 .intel_syntax noprefix
 

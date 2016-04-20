@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <kernel/vga.h>
+#include <kernel/iobus.h>
 
 /*
  * Macro for scrolling
@@ -30,6 +31,19 @@ static uint8_t terminal_setcolor(uint8_t color) {
  * See http://wiki.osdev.org/Text_Mode_Cursor
  */
 void upd_c() {
+	/*
+	 *  BIOS in unreachable now, since interrupt handlers are installed
+	 *
+	__asm__ (	"push %ax\n\t"
+			"push %bx\n\t"
+			"push %dx\n\t"
+			"mov %ah, 0x02\n\t"
+			"mov %bh, 0x0\n\t");
+	__asm__ ("mov %%dh, %0\n\t" : :"m"(terminal_row));
+	__asm__ ("mov %%dl, %0\n\t" : :"m"(terminal_column));
+	__asm__ ("int $10; pop %ax; pop %bx; pop %dx");
+	return;
+	*/
 	unsigned short p = (terminal_row*VGA_WIDTH)+terminal_column;
 
 	outportb(0x3D4,0x0F);

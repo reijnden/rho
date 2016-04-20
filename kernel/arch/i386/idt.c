@@ -168,14 +168,14 @@ void fault_handler(struct regs *r){
 		case 29:
 		case 30:
 		case 31:
-			printf ("Interrupt [%li:%li][%s]! Halting system\n",
+			printf ("Dang! unhandled interrupt [%li:%li][%s]! Halting system\n",
 					r->int_no,r->err_code,int_msg[r->int_no]);
 			coredump(r);
 			while ( 1 ) { }
 			__builtin_unreachable();
 			break;
 		default:
-			printf("Unknown fault! Halting system\n");
+			printf("Dang! unknown fault! Halting system\n");
 			while ( 1 ) { }
 			__builtin_unreachable();
 			break;
