@@ -25,7 +25,7 @@ stack_top:
 _start:
 	movl $stack_top, %esp
 	push %ebx	# store 32 bit physical address of multiboot_header;
-	push %eax	# store bootloader magic number, so we can check it in main
+	push %eax	# store bootloader magic number, so we can check it in kernel_early
 
 	# Initialize the core kernel before running the global constructors.
 	# The stack contains magic number, multiboot_header
@@ -36,7 +36,7 @@ _start:
 	call _init
 
 	# Transfer control to the main kernel.
-	pop %eax	# pop the magic number
+	pop %eax	# pop the magic number, put multiboot header address up for kernel_main
 	# The stack now contains the multiboot_header only
 	call kernel_main
 

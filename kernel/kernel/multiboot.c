@@ -53,7 +53,8 @@ void boot_info(multiboot_info *mbt)
 			mmap = (multiboot_mmap *)((unsigned int)mmap + (unsigned int)(mmap->size) + sizeof(unsigned int));
 		}
 		printf("Total memory : %lluKb, Reserved: %lluKb, Available: %lluKb\n",
-				(mema+memr)/1024, memr/1024, mema/1024);
+				/* >>10 == divide by 1024 */
+				(mema+memr)>>10, memr>>10, mema>>10);
 	}
 	if (mbt->flags & MULTIBOOT_INFO_DRIVE_INFO) {
 		
@@ -74,5 +75,17 @@ void boot_info(multiboot_info *mbt)
 		
 		printf ("Graphics table %s\n","available");
 	}
+	/*
+	 * Printing some data out of the BDA (BIOS Data Area)
+	 * See www.bioscentral.com/misc/dba.htm
+	 */
+	unsigned long *iobase = 0x463;
+	printf ("Video base IO port: 0x%lx\n",*iobase);
+	unsigned char *displaymode = 0x449;
+	printf ("Display mode: 0x%x\n",*displaymode);
+	unsigned char *cols = 0x44A;
+	printf ("Number of columns in text mode: %d\n",(unsigned int)*cols);
+	unsigned char *rows = 0x484;
+	printf ("Number of rows in text mode: %d\n",((unsigned int)*rows) + 1);
 }
 

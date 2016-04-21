@@ -76,7 +76,7 @@ void kernel_main(multiboot_info *mbt)
 	printf("PE set by bootloader? cr0 register: 0x%x\n",cr0);
 
 	printf("Rho version %d.%d.%d booted\n",RHO_MAJOR,RHO_MINOR,RHO_PATCH);
-	asm("int $1");
+	//asm("int $1");
 	/*
 	 * Wait until interrupted
 	 */
