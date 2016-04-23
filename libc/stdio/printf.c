@@ -12,25 +12,37 @@ static void print(const char* data, size_t data_length)
 		putchar((int) ((const unsigned char*) data)[i]);
 }
 
-static void printllbase (unsigned long long l, int base) {
-	static char tab[16] = "0123456789abcdef";
+static void printllbase (unsigned long long l, int base, unsigned char flags) {
+	static char tab[32] = "0123456789abcdef0123456789ABCDEF";
 	if (l / base != 0)
-		printllbase(l / base, base);
-	print (&tab[l % base],sizeof(tab[l % base]));
+		printllbase(l / base, base, flags);
+	if (flags & 0x01) {
+		print (&tab[(l % base) + 16],sizeof(tab[l % base]));
+	} else {
+		print (&tab[l % base],sizeof(tab[l % base]));
+	}
 }
 
-static void printlbase (unsigned long l, int base) {
-	static char tab[16] = "0123456789abcdef";
+static void printlbase (unsigned long l, int base, unsigned char flags) {
+	static char tab[32] = "0123456789abcdef0123456789ABCDEF";
 	if (l / base != 0)
-		printlbase(l / base, base);
-	print (&tab[l % base],sizeof(tab[l % base]));
+		printlbase(l / base, base, flags);
+	if (flags & 0x01) {
+		print (&tab[(l % base) + 16],sizeof(tab[l % base]));
+	} else {
+		print (&tab[l % base],sizeof(tab[l % base]));
+	}
 }
 
-static void printbase (unsigned int i, int base) {
-	static char tab[16] = "0123456789abcdef";
+static void printbase (unsigned int i, int base, unsigned char flags) {
+	static char tab[32] = "0123456789abcdef0123456789ABCDEF";
 	if (i / base != 0)
-		printbase(i / base, base);
-	print (&tab[i % base],sizeof(tab[i % base]));
+		printbase(i / base, base, flags);
+	if (flags & 0x01) {
+		print (&tab[(i % base) + 16],sizeof(tab[i % base]));
+	} else {
+		print (&tab[i % base],sizeof(tab[i % base]));
+	}
 }
 
 static void printi (int i) {
@@ -115,7 +127,7 @@ int printf(const char* __restrict format, ...)
 		{
 			format++;
 			unsigned int o = va_arg(parameters, unsigned int);
-			printbase(o, 8);
+			printbase(o, 8, 0);
 		}
 		else if ( *format == 's' )
 		{
@@ -128,33 +140,34 @@ int printf(const char* __restrict format, ...)
 			format++;
 			if (mod2 == 'l') {
 				unsigned long long u = va_arg(parameters, unsigned long long);
-				printllbase(u, 10);
+				printllbase(u, 10, 0);
 				mod1 = mod2 = 0;
 			}
 			else if (mod1 == 'l') {
 				unsigned long u = va_arg(parameters, unsigned long);
-				printlbase(u, 10);
+				printlbase(u, 10, 0);
 				mod1 = 0;
 			} else {
 				unsigned int u = va_arg(parameters, unsigned int);
-				printbase(u, 10);
+				printbase(u, 10, 0);
 			}
 		}
-		else if ( *format == 'x' )
+		else if ( *format == 'x' || *format == 'X' )
 		{
+			unsigned char f = *format == 'x'?0x0:0x1;
 			format++;
 			if (mod2 == 'l') {
 				unsigned long long x = va_arg(parameters, unsigned long long);
-				printllbase(x, 16);
+				printllbase(x, 16, f);
 				mod1 = mod2 = 0;
 			}
 			else if (mod1 == 'l') {
 				unsigned long x = va_arg(parameters, unsigned long);
-				printlbase(x, 16);
+				printlbase(x, 16, f);
 				mod1 = 0;
 			} else {
 				unsigned int x = va_arg(parameters, unsigned int);
-				printbase(x, 16);
+				printbase(x, 16, f);
 			}
 		}
 		else
