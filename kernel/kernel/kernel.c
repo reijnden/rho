@@ -13,6 +13,21 @@
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
 
+
+void mem_inspect(uint32_t start, uint32_t end){
+	/*
+	 * Fool the compiler, initiate p on address 1, null-pointers don't work
+	 */
+	uint8_t *p = (uint8_t *)0x01;
+	p+=start;
+	while (start<end){
+		if (start % 16 == 0)printf("0x%lx:",start);
+		printf ("0x%X ",*(p-1));
+		start++;
+		p++;
+		if (start % 16 == 0)printf("\n");
+	}
+}
 /*
  * Called from boot.S, prior to global constructor
  */
@@ -32,6 +47,9 @@ void kernel_early(uint32_t magic)
  */
 void kernel_main(multiboot_info *mbt)
 {
+	/*
+	 * second argument is an 8 bit flag. low bit sets verbosity.
+	 */
 	boot_info(mbt,(uint8_t)0x00);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
@@ -71,12 +89,14 @@ void kernel_main(multiboot_info *mbt)
 	 * Testing cr0 register
 	 */
 	uint32_t _cr0 = cr0();
-	printf("PE (Protection Enabled, lowest bit of cr0 register) set? 0x%lx\n",_cr0);
+	printf("PE (Protection Enabled, lowest bit of cr0 register) set? 0x%lx, %s\n",
+			_cr0,_cr0&0x00000001?"yes":"no");
 
 	printf("Rho version %d.%d.%d booted\n",RHO_MAJOR,RHO_MINOR,RHO_PATCH);
 	/*
 	 * Wait until interrupted
 	 */
+	mem_inspect(1024,1536);
 	while ( 1 ) {
 		/*
 		 * Update the cursos position
