@@ -13,10 +13,6 @@
 #define PIT_CH1PORT	0x41				/* Channel 1 system specific */
 #define PIT_CH2PORT	0x42				/* Channel 2 system speaker */
 #define PIT_CMDPORT	0x43
-/*
- * The keyboard channels
- */
-#define KB_DATAPORT	0x60
 
 unsigned char inportb(unsigned short _port);
 void outportb(unsigned short _port, unsigned char _data);

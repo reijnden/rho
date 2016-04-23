@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+/*
+ * The keyboard channels
+ */
+#define KB_DATAPORT	0x60
+#define KB_STATUSPORT	0x64
+
 /* Scancodes for control characters */
 #define LSHFT		0x2a
 #define RSHFT		0x2a
@@ -57,7 +63,13 @@ unsigned char kbmap[] = {
  * This function presumes that there can be only one keyboard.
  */
 void keyboard_handler (struct regs *r) {
-	unsigned char scancode = inportb(KB_DATAPORT);
+	uint8_t status = inportb(KB_STATUSPORT);
+	/*
+	if (status ^ 0x01) {
+		return;
+	}
+	*/
+	uint8_t scancode = inportb(KB_DATAPORT);
 	if (scancode & KEY_UP) {				/* release */
 		scancode &= ~KEY_UP;				/* switch off bit 7 to get the original key */
 		if ((scancode == RSHFT) || (scancode == LSHFT))
