@@ -74,6 +74,10 @@ void idt_install() {
 	id.limit = (sizeof(struct idt_entry) * IDT_ENTRIES) - 1;
 	id.base =(uint32_t) &idt;
 
+	/*
+	 * isr0 to isr31 are labels in asm/isr.S
+	 * they set the irq prepare the stack no and call the fault_handler
+	 */
 	idt_set_gate(0,(uint32_t)isr0,IDT_SELECTOR,IDT_P|IDT_DPL0|IDT_T_INT32);
 	idt_set_gate(1,(uint32_t)isr1,IDT_SELECTOR,IDT_P|IDT_DPL0|IDT_T_INT32);
 	idt_set_gate(2,(uint32_t)isr2,IDT_SELECTOR,IDT_P|IDT_DPL0|IDT_T_INT32);
