@@ -32,7 +32,7 @@ void kernel_early(uint32_t magic)
  */
 void kernel_main(multiboot_info *mbt)
 {
-	boot_info(mbt);
+	boot_info(mbt,(uint8_t)0x00);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	printf ("OK\n");
@@ -70,19 +70,22 @@ void kernel_main(multiboot_info *mbt)
 	/*
 	 * Testing cr0 register
 	 */
-	unsigned int cr0;
-	asm ("movl %%cr0,%%eax\n"
-	     "movl %%eax, %0" : "=rm" (cr0) );
-	printf("PE set by bootloader? cr0 register: 0x%x\n",cr0);
+	uint32_t _cr0 = cr0();
+	printf("PE (Protection Enabled, lowest bit of cr0 register) set? 0x%lx\n",_cr0);
 
 	printf("Rho version %d.%d.%d booted\n",RHO_MAJOR,RHO_MINOR,RHO_PATCH);
-	//asm("int $1");
 	/*
 	 * Wait until interrupted
 	 */
 	while ( 1 ) {
+		/*
+		 * Update the cursos position
+		 */
 		upd_c();
-		__asm__ __volatile__ ( "hlt" );
+		/*
+		 * Wait for interrupts
+		 */
+		irq_wait();
 	}
 	/* */
 }

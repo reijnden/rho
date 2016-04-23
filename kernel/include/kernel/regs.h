@@ -11,5 +11,6 @@ struct regs {
 };
 
 void kdebug();
+uint32_t cr0();
 
 #endif

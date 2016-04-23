@@ -83,6 +83,6 @@ typedef struct
   uint32_t type;
 } multiboot_mmap;
 
-void boot_info(multiboot_info *mbt);
+void boot_info(multiboot_info *mbt,uint8_t flags);
 
 #endif /* ! MULTIBOOT_HEADER */

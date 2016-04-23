@@ -108,3 +108,7 @@ void irq_install() {
 	idt_set_gate(46,(uint32_t)irq14,0x08,0x8e);
 	idt_set_gate(47,(uint32_t)irq15,0x08,0x8e);
 }
+
+void irq_wait() {
+	asm ( "hlt" );
+}

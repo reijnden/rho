@@ -10,6 +10,7 @@ void irq_uninstall_handler(int irq);
 void irq_enable();
 void irq_disable();
 bool irq_on();
+void irq_wait();
 
 /*
  * Defined in irq.S
