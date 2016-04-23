@@ -13,19 +13,25 @@
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
 
-
-void mem_inspect(uint32_t start, uint32_t end){
+/*
+ * Dump a memory area on screen
+ */
+void mem_inspect(uint32_t byte_from, uint32_t byte_to){
 	/*
 	 * Fool the compiler, initiate p on address 1, null-pointers don't work
 	 */
-	uint8_t *p = (uint8_t *)0x01;
-	p+=start;
-	while (start<end){
-		if (start % 16 == 0)printf("0x%lx:",start);
-		printf ("0x%X ",*(p-1));
-		start++;
-		p++;
-		if (start % 16 == 0)printf("\n");
+	uint8_t *pos = (uint8_t *)0x01;
+	pos+=byte_from;
+	/*
+	 * number of bytes per line
+	 */
+	int bytes_per_line = 16;
+	while (byte_from<byte_to){
+		if (byte_from % bytes_per_line == 0)printf("0x%lx:",byte_from);
+		printf ("0x%X ",*(pos-1));
+		byte_from++;
+		pos++;
+		if (byte_from % bytes_per_line == 0)printf("\n");
 	}
 }
 /*
@@ -73,18 +79,6 @@ void kernel_main(multiboot_info *mbt)
 	} else {
 		abort();
 	}
-	/*
-	 * Testing printf
-	for ( unsigned int i = 0; i<16;i++) {
-		printf("Int:%i (%u bits) Hex:0x%x Oct:0%o\n",i,(unsigned int)sizeof(i) * 8,i,i);
-	}
-	for ( unsigned long l = 0; l<16;l++) {
-		printf("Long:%lu (%u bits)\n",l,(unsigned int)sizeof(l) * 8);
-	}
-	for ( unsigned long long l = 0; l<16;l++) {
-		printf("Longlong:%llu (%u bits)\n",l,(unsigned int)sizeof(l) * 8);
-	}
-	 */
 	/*
 	 * Testing cr0 register
 	 */
