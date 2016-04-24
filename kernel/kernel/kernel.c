@@ -56,7 +56,7 @@ void kernel_main(multiboot_info *mbt)
 	/*
 	 * second argument is an 8 bit flag. low bit sets verbosity.
 	 */
-	boot_info(mbt,(uint8_t)0x00);
+	boot_info(mbt,MB_MEMORY | MB_BDA);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	printf ("OK\n");
@@ -90,7 +90,7 @@ void kernel_main(multiboot_info *mbt)
 	/*
 	 * Wait until interrupted
 	 */
-	mem_inspect(1024,1536);
+//	mem_inspect(1024,1536);
 	while ( 1 ) {
 		/*
 		 * Update the cursos position

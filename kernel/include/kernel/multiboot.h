@@ -83,6 +83,16 @@ typedef struct
   uint32_t type;
 } multiboot_mmap;
 
-void boot_info(multiboot_info *mbt,uint8_t flags);
+void boot_info(multiboot_info *mbt,uint16_t flags);
+
+#define MB_MEMORY	0x0001
+#define MB_DEV		0x0002
+#define MB_CMD		0x0004
+#define MB_MODS		0x0008
+#define MB_DRIVE	0x0010
+#define MB_CONFIG	0x0020
+#define MB_APM		0x0040
+#define MB_VBE		0x0080
+#define MB_BDA		0x0100
 
 #endif /* ! MULTIBOOT_HEADER */
