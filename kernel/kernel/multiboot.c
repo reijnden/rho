@@ -15,6 +15,7 @@
  */
 void boot_info(multiboot_info *mbt,uint8_t flags)
 {
+//	char **mtype = ["Available","Reserved","ACPI reclaimable","NVS","Bad RAM"];
 	if (flags&0x01) printf ("Flags [%x]\n",(unsigned int)mbt->flags);
 	if (mbt->flags & MULTIBOOT_INFO_MEMORY) {
 		if (flags&0x01) printf ("Lower memory at 0x0: %u Kb\n",(unsigned int)mbt->mem_lower);
