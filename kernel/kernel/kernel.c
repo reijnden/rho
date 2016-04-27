@@ -41,9 +41,9 @@ void kernel_early(uint32_t magic)
 {
 	irq_disable();
 	terminal_initialize();
-	printf("Checking multiboot compliance [0x%lx & 0x%x]...\n",magic,MULTIBOOT_MAGIC);
+	puts("Checking multiboot compliance");
 	if (!(magic & MULTIBOOT_MAGIC)) {
-		printf ("Not multiboot compliant! %s\n","Aborting");
+		puts ("Not multiboot compliant! Aborting");
 		abort();
 	}
 }
@@ -59,23 +59,23 @@ void kernel_main(multiboot_info *mbt)
 	boot_info(mbt,MB_MEMORY | MB_BDA);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
-	printf ("OK\n");
+	puts ("OK");
 	printf ("Setting up Interrupt Descriptor Table... ");
 	idt_install();
-	printf ("OK\n");
+	puts ("OK");
 	printf ("Setting up IRQ... ");
 	irq_install();
-	printf ("OK\n");
+	puts ("OK");
 	printf ("Configuring system clock... ");
 	timer_install(100);
-	printf ("OK\n");
+	puts ("OK");
 	printf ("Enabling keyboard... ");
 	keyboard_install();
-	printf ("OK\n");
+	puts ("OK");
 	printf ("Enabling interrupts... ");
 	irq_enable();
 	if (irq_on()) {
-		printf ("OK\n");
+		puts ("OK");
 	} else {
 		abort();
 	}
