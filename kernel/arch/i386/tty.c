@@ -32,20 +32,20 @@ static uint8_t terminal_setcolor(uint8_t color) {
  */
 void upd_c() {
 	/*
-	 *  BIOS in unreachable now, since interrupt handlers are installed
+	 *  BIOS is unreachable now, since interrupt handlers are installed
 	 *
-	__asm__ (	"push %ax\n\t"
+	asm (	"push %ax\n\t"
 			"push %bx\n\t"
 			"push %dx\n\t"
 			"mov %ah, 0x02\n\t"
 			"mov %bh, 0x0\n\t");
-	__asm__ ("mov %%dh, %0\n\t" : :"m"(terminal_row));
-	__asm__ ("mov %%dl, %0\n\t" : :"m"(terminal_column));
-	__asm__ ("int $10; pop %ax; pop %bx; pop %dx");
+	asm ("mov %%dh, %0\n\t" : :"m"(terminal_row));
+	asm ("mov %%dl, %0\n\t" : :"m"(terminal_column));
+	asm ("int $10; pop %ax; pop %bx; pop %dx");
 	return;
 	*/
 	unsigned short p = (terminal_row*VGA_WIDTH)+terminal_column;
-
+	// TODO use addresses from BDA, see multiboot.c
 	outportb(0x3D4,0x0F);
 	outportb(0x3D5,(unsigned char)(p&0xFF));
 	outportb(0x3D4,0x0E);
