@@ -12,7 +12,9 @@
 #include <kernel/irq.h>
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
+#include <kernel/kernel.h>
 
+rho_context rho;
 /*
  * Dump a memory area on screen
  */
@@ -40,6 +42,9 @@ void mem_inspect(uint32_t byte_from, uint32_t byte_to){
 void kernel_early(uint32_t magic)
 {
 	irq_disable();
+	memset(&rho,0,sizeof(rho_context));
+	rho.cols=80;	// We need some preliminary values in order to write
+	rho.rows=25;	// to the console
 	terminal_initialize();
 	puts("Checking multiboot compliance");
 	if (!(magic & MULTIBOOT_MAGIC)) {
@@ -57,6 +62,11 @@ void kernel_main(multiboot_info *mbt)
 	 * second argument is an 8 bit flag. low bit sets verbosity.
 	 */
 	boot_info(mbt,MB_MEMORY | MB_BDA);
+	printf ("BDA:Video base IO port: 0x%x\n",rho.iobase);
+	printf ("BDA:Display mode: 0x%x\n",rho.displaymode);
+	printf ("BDA:Number of columns in text mode: %d\n",(unsigned int)rho.cols);
+	printf ("BDA:Number of rows in text mode: %d\n",((unsigned int)rho.rows) + 1);
+
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	puts ("OK");

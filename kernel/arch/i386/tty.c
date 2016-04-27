@@ -5,6 +5,7 @@
 
 #include <kernel/vga.h>
 #include <kernel/iobus.h>
+#include <kernel/kernel.h>
 
 /*
  * Macro for scrolling
@@ -44,7 +45,7 @@ void upd_c() {
 	asm ("int $10; pop %ax; pop %bx; pop %dx");
 	return;
 	*/
-	unsigned short p = (terminal_row*VGA_WIDTH)+terminal_column;
+	unsigned short p = (terminal_row*rho.cols)+terminal_column;
 	// TODO use addresses from BDA, see multiboot.c
 	outportb(0x3D4,0x0F);
 	outportb(0x3D5,(unsigned char)(p&0xFF));
@@ -60,9 +61,9 @@ void terminal_initialize(void) {
 	terminal_column = 0;
 	terminal_setcolor(make_color(COLOR_LIGHT_GREY, COLOR_BLACK));
 	terminal_buffer = VGA_MEMORY;
-	for ( size_t y = 0; y < VGA_HEIGHT; y++ ) {
-		for ( size_t x = 0; x < VGA_WIDTH; x++ ) {
-			const size_t index = y * VGA_WIDTH + x;
+	for ( size_t y = 0; y < rho.rows; y++ ) {
+		for ( size_t x = 0; x < rho.cols; x++ ) {
+			const size_t index = y * rho.cols + x;
 			terminal_buffer[index] = make_vgaentry(' ', terminal_color);
 		}
 	}
@@ -72,20 +73,20 @@ void terminal_initialize(void) {
  * Place a character at given position in the buffer.
  */
 static void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
-	const size_t index = y * VGA_WIDTH + x;
+	const size_t index = y * rho.cols + x;
 	terminal_buffer[index] = make_vgaentry(c, color);
 }
 
 /*
- * Move each character moved VGA_WIDTH positions up in the buffer.
+ * Move each character moved rho.cols positions up in the buffer.
  * This effectively scrolls the whole buffer 1 line up.
  * Clear the last line.
  */
 static void terminal_scroll() {
-	for (size_t src = VGA_WIDTH; src < VGA_WIDTH*VGA_HEIGHT; src++)
-		terminal_buffer[src-VGA_WIDTH] = terminal_buffer[src];
-	for (size_t x = 0; x < VGA_WIDTH; x++)
-		terminal_putentryat(' ', terminal_color, x, VGA_HEIGHT-1);
+	for (size_t src = rho.cols; src < rho.cols*rho.rows; src++)
+		terminal_buffer[src-rho.cols] = terminal_buffer[src];
+	for (size_t x = 0; x < rho.cols; x++)
+		terminal_putentryat(' ', terminal_color, x, rho.rows-1);
 	terminal_row--;
 }
 
@@ -94,7 +95,7 @@ static void terminal_scroll() {
  */
 void terminal_putchar(char c) {
 	if (c == '\n') {
-		__NEWLINE(VGA_HEIGHT);
+		__NEWLINE(rho.rows);
 		return;
 	}
 	/*
@@ -103,7 +104,7 @@ void terminal_putchar(char c) {
 	 */
 	if (c == '\b') {
 		if (terminal_column == 0) { /* beginning of line */
-			terminal_column = VGA_WIDTH;
+			terminal_column = rho.cols;
 			terminal_row--;
 		}
 		terminal_column--;
@@ -111,8 +112,8 @@ void terminal_putchar(char c) {
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 	} else {
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-		if ( ++terminal_column == VGA_WIDTH ){
-			__NEWLINE(VGA_HEIGHT);
+		if ( ++terminal_column == rho.cols ){
+			__NEWLINE(rho.rows);
 		}
 	}
 }

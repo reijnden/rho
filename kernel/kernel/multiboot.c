@@ -6,6 +6,7 @@
 
 #include <kernel/tty.h>
 #include <kernel/multiboot.h>
+#include <kernel/kernel.h>
 
 /*
  * Inspect the info provided by the bootloader.
@@ -99,16 +100,12 @@ void boot_info(multiboot_info *mbt,uint16_t flags)
 			printf ("Graphics table %s\n","available");
 	}
 	/*
-	 * Printing some data out of the BDA (BIOS Data Area)
+	 * Storing some data out of the BDA (BIOS Data Area)
 	 * See www.bioscentral.com/misc/dba.htm
 	 */
-	uint16_t *iobase = (uint16_t *)0x463;
-	if (flags & MB_BDA) printf ("BDA:Video base IO port: 0x%x\n",*iobase);
-	uint8_t *displaymode = (uint8_t *)0x449;
-	if (flags & MB_BDA) printf ("BDA:Display mode: 0x%x\n",*displaymode);
-	uint8_t *cols = (uint8_t *)0x44A;
-	if (flags & MB_BDA) printf ("BDA:Number of columns in text mode: %d\n",(unsigned int)*cols);
-	uint8_t *rows = (uint8_t *)0x484;
-	if (flags & MB_BDA) printf ("BDA:Number of rows in text mode: %d\n",((unsigned int)*rows) + 1);
+	memcpy(&rho.iobase,(uint16_t *)0x463,sizeof(uint16_t));
+	memcpy(&rho.displaymode,(uint8_t *)0x449,sizeof(uint8_t));
+	memcpy(&rho.cols,(uint8_t *)0x44A,sizeof(uint8_t));
+	memcpy(&rho.rows,(uint8_t *)0x484,sizeof(uint8_t));
 }
 
