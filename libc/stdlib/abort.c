@@ -7,9 +7,9 @@ void abort(void)
 {
 #if defined(__is_rho_kernel)
 	// TODO: Add proper kernel panic.
-	printf("Kernel Panic: abort()\n");
+	puts("Kernel Panic: abort()");
 #else
-	printf("abort()\n");
+	puts("abort()");
 #endif
 	while ( 1 ) { }
 	__builtin_unreachable();
