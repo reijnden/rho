@@ -11,7 +11,6 @@
 /*
  * Inspect the info provided by the bootloader.
  * Currently it is printed to screen.
- * TODO: store the info for later usage.
  * For example the memory map and commandline can be usefull ;-)
  * flags: see multiboot.h
  *
@@ -99,13 +98,5 @@ void boot_info(multiboot_info *mbt,uint16_t flags)
 		if (flags & MB_VBE)
 			printf ("Graphics table %s\n","available");
 	}
-	/*
-	 * Storing some data out of the BDA (BIOS Data Area)
-	 * See www.bioscentral.com/misc/dba.htm
-	 */
-	memcpy(&rho.iobase,(uint16_t *)0x463,sizeof(uint16_t));
-	memcpy(&rho.displaymode,(uint8_t *)0x449,sizeof(uint8_t));
-	memcpy(&rho.cols,(uint8_t *)0x44A,sizeof(uint8_t));
-	memcpy(&rho.rows,(uint8_t *)0x484,sizeof(uint8_t));
 }
 

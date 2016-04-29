@@ -15,6 +15,7 @@
 #include <kernel/kernel.h>
 
 rho_context rho;
+
 /*
  * Dump a memory area on screen
  */
@@ -43,14 +44,24 @@ void kernel_early(uint32_t magic)
 {
 	irq_disable();
 	memset(&rho,0,sizeof(rho_context));
-	rho.cols=80;	// We need some preliminary values in order to write
-	rho.rows=25;	// to the console
+	/*
+	 * Storing some data out of the BDA (BIOS Data Area)
+	 * See www.bioscentral.com/misc/dba.htm
+	 */
+	memcpy(&rho.iobase,(uint16_t *)0x463,sizeof(uint16_t));
+	memcpy(&rho.displaymode,(uint8_t *)0x449,sizeof(uint8_t));
+	memcpy(&rho.cols,(uint8_t *)0x44A,sizeof(uint8_t));
+	memcpy(&rho.rows,(uint8_t *)0x484,sizeof(uint8_t));
 	terminal_initialize();
 	puts("Checking multiboot compliance");
 	if (!(magic & MULTIBOOT_MAGIC)) {
 		puts ("Not multiboot compliant! Aborting");
 		abort();
 	}
+	printf ("BDA:Video base IO port: 0x%x\n",rho.iobase);
+	printf ("BDA:Display mode: 0x%x\n",rho.displaymode);
+	printf ("BDA:Number of columns in text mode: %d\n",(unsigned int)rho.cols);
+	printf ("BDA:Number of rows in text mode: %d\n",((unsigned int)rho.rows) + 1);
 }
 
 /*
@@ -62,11 +73,6 @@ void kernel_main(multiboot_info *mbt)
 	 * second argument is an 8 bit flag. low bit sets verbosity.
 	 */
 	boot_info(mbt,MB_MEMORY | MB_BDA);
-	printf ("BDA:Video base IO port: 0x%x\n",rho.iobase);
-	printf ("BDA:Display mode: 0x%x\n",rho.displaymode);
-	printf ("BDA:Number of columns in text mode: %d\n",(unsigned int)rho.cols);
-	printf ("BDA:Number of rows in text mode: %d\n",((unsigned int)rho.rows) + 1);
-
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	puts ("OK");
