@@ -28,7 +28,7 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 
 OBJS:=\
 $(KERNEL_ARCH_OBJS) \
-kernel/kernel.o \
+kernel/main.o \
 kernel/multiboot.o \
 
 CRTI_OBJ:=$(ARCHDIR)/asm/crti.o
