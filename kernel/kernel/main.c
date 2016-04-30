@@ -72,7 +72,7 @@ void kernel_main(multiboot_info *mbt)
 	/*
 	 * second argument is an 8 bit flag. low bit sets verbosity.
 	 */
-	boot_info(mbt,MB_MEMORY | MB_BDA);
+	boot_info(mbt,MB_DRIVE | MB_CONFIG | MB_DEV | MB_MEMORY);
 	printf ("Setting up Global Descriptor Table... ");
 	gdt_install();
 	puts ("OK");
