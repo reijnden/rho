@@ -93,6 +93,5 @@ void boot_info(multiboot_info *mbt,uint16_t flags);
 #define MB_CONFIG	0x0020
 #define MB_APM		0x0040
 #define MB_VBE		0x0080
-#define MB_BDA		0x0100
 
 #endif /* ! MULTIBOOT_HEADER */
