@@ -34,8 +34,8 @@
 .long 0					# entry_addr
 # Required since flags[2] is set for video mode info
 .long 1					# mode_type
-.long 80				# width
-.long 25				# height
+.long 0					# width
+.long 0					# height
 .long 0					# depth
 
 # Reserve a stack for the initial thread.

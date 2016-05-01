@@ -57,6 +57,7 @@
 #include <kernel/tty.h>
 #include <kernel/multiboot.h>
 #include <kernel/kernel.h>
+#include <kernel/vesa.h>
 
 /*
  * Inspect the info provided by the bootloader.
@@ -322,6 +323,8 @@ void boot_info(multiboot_info *mbt,uint16_t flags)
 	if (mbt->flags & MULTIBOOT_INFO_DRIVE_INFO) {
 		if (flags & MB_DRIVE)
 			printf ("Drive info: [0x%X]\n", (unsigned int)(mbt->drives_length));
+	} else {
+		puts ("Drive info not set");
 	}
 	/*
 	 * If bit 8 in the ‘flags’ is set, then the ‘config_table’ field is valid, and indicates the address
@@ -387,10 +390,27 @@ void boot_info(multiboot_info *mbt,uint16_t flags)
 	 *
 	 * The fields for the graphics table are designed for vbe, but Multiboot boot loaders may
 	 * simulate vbe on non-vbe modes, as if they were vbe modes.
+	 *
+	 * https://en.wikipedia.org/wiki/VESA_BIOS_Extensions
 	 */
 	if (mbt->flags & MULTIBOOT_INFO_VBE_INFO) {
-		if (flags & MB_VBE)
-			printf ("Graphics table %s\n","available");
+		if (flags & MB_VBE) {
+			char *sig[5];
+			struct VbeInfoBlock * vbe_control_info = (struct VbeInfoBlock *)mbt->vbe_control_info;
+			struct ModeInfoBlock * vbe_mode_info = (struct ModeInfoBlock *)mbt->vbe_mode_info;
+			memset (sig,0,5);
+			puts ("Graphics table available");
+			printf(" VBE control info address: 0x%lX\n", (uint32_t)vbe_control_info);
+			memcpy(sig,vbe_control_info->VbeSignature,4);
+			printf(" VBE signature: %s [0x%X]\n", (char *)sig, vbe_control_info->VbeVersion);
+			printf(" VBE mode info address: 0x%lX\n", (uint32_t)vbe_mode_info);
+			printf(" Video mode (obsolete): 0x%X\n", mbt->vbe_mode);
+/* TODO
+  uint16_t vbe_interface_seg;
+  uint16_t vbe_interface_off;
+  uint16_t vbe_interface_len;
+*/
+		}
 	}
 }
 
