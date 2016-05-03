@@ -9,3 +9,4 @@ done
 rm -rfv sysroot
 rm -rfv isodir
 rm -rfv rho.iso
+rm -rfv rho.img

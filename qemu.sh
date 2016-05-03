@@ -3,6 +3,9 @@ set -e
 . ./iso.sh
 
 #
-# max memory 2047
+# qemu max memory 2047!
 #
-qemu-system-$(./target-triplet-to-arch.sh $HOST) -cdrom rho.iso -m 1024 -display curses
+# read boot disk from command line
+# d = cdrom
+# c = hard-disk
+qemu-system-$(./target-triplet-to-arch.sh $HOST) -cdrom rho.iso -m 1024 -display curses -hda rho.img -boot order=$1
