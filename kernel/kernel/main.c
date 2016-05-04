@@ -57,6 +57,7 @@
 #include <kernel/timer.h>
 #include <kernel/keyboard.h>
 #include <kernel/kernel.h>
+#include <kernel/pci.h>
 
 rho_context rho;
 
@@ -147,6 +148,7 @@ void kernel_main(multiboot_info *mbt)
 			_cr0,_cr0&0x00000001?"yes":"no");
 
 	printf("Rho version %d.%d.%d booted\n",RHO_MAJOR,RHO_MINOR,RHO_PATCH);
+	checkAllBuses();
 	/*
 	 * Wait until interrupted
 	 */
