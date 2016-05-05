@@ -30,7 +30,15 @@ static uint16_t pciCheckVendor(uint8_t bus, uint8_t slot) {
     uint16_t vendor, device, class;
     /* try and read the first configuration register. Since there are no */
     /* vendors that == 0xFFFF, it must be a non-existent device. */
-    if ((vendor = pciConfigReadWord(bus,slot,0,0)) != 0xFFFF) {
+    //if ((vendor = pciConfigReadWord(bus,slot,0,0)) != 0xFFFF) {
+    if ((vendor = pciConfigReadWord(bus,slot,0,0)) == 0x8086) {
+        /* see http://pcidatabase.com/vendor_details.php?id=1302
+	 * 8086 = Intel
+	 * devices: 1237,7000,100e
+	 * PCI & Memory
+	 * PIIX3 PCI-to-ISA Bridge: this one is our disk driver under qemu
+	 * Intel Pro 1000/MT
+	 */
         device = pciConfigReadWord(bus,slot,0,2);
         class = pciConfigReadWord(bus,slot,0,8);
 	printf("Vendor:0x%x\n",vendor);
