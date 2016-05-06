@@ -34,17 +34,24 @@ static uint16_t pciCheckVendor(uint8_t bus, uint8_t slot) {
     if ((vendor = pciConfigReadWord(bus,slot,0,0)) == 0x8086) {
         /* see http://pcidatabase.com/vendor_details.php?id=1302
 	 * 8086 = Intel
-	 * devices: 1237,7000,100e
-	 * PCI & Memory
-	 * PIIX3 PCI-to-ISA Bridge: this one is our disk driver under qemu
-	 * Intel Pro 1000/MT
+	 * QEMU devices:
+	 * 	1237: PCI & Memory
+	 * 	7000: PIIX3 PCI-to-ISA Bridge: this one is our disk driver under qemu
+	 * 	100e: Intel Pro 1000/MT
+	 * VirtualBox devices:
+	 *	1237: see above
+	 *	7000: see above
+	 *	2415: SM/Bus Controller 24C3
+	 *	7113: PIIX4/4E/4M Power Management Controller
+	 *	265c: USB 2.0 EHCI Controller
+	 *	2829: ICH8M SATA AHCI Controller
 	 */
         device = pciConfigReadWord(bus,slot,0,2);
         class = pciConfigReadWord(bus,slot,0,8);
 	printf("Vendor:0x%x\n",vendor);
 	printf(" Device:0x%x\n",device);
-        printf(" Class/Subclass:0x%x\n", class);
-        printf(" Class/Subclass:0x%x 0x%x\n", (uint8_t) (class >> 8), (uint8_t)(class));
+//        printf(" Class/Subclass:0x%x\n", class);
+//        printf(" Class/Subclass:0x%x 0x%x\n", (uint8_t) (class >> 8), (uint8_t)(class));
     } return (vendor);
 }
 
