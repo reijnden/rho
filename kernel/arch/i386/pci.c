@@ -50,8 +50,8 @@ static uint16_t pciCheckVendor(uint8_t bus, uint8_t slot) {
         class = pciConfigReadWord(bus,slot,0,8);
 	printf("Vendor:0x%x\n",vendor);
 	printf(" Device:0x%x\n",device);
-//        printf(" Class/Subclass:0x%x\n", class);
-//        printf(" Class/Subclass:0x%x 0x%x\n", (uint8_t) (class >> 8), (uint8_t)(class));
+        printf(" Class/Subclass:0x%x\n", class);
+        printf(" Class/Subclass:0x%x 0x%x\n", (uint8_t) (class >> 8), (uint8_t)(class));
     } return (vendor);
 }
 
